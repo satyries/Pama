@@ -1,0 +1,12 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+
+[gen]
+files=[ "res://system/messages/text.en.translation", "res://system/messages/text.es.translation", "res://system/messages/text.de.translation", "res://system/messages/text.it.translation", "res://system/messages/text.ja.translation", "res://system/messages/text.ko.translation" ]
+
+[params]
+
+compress=true
+delimiter=0

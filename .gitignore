@@ -2,3 +2,5 @@
 logs/
 *.log
 engine.appimage
+*.blend1
+*.blend

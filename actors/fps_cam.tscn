@@ -1,0 +1,178 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://actors/fps_cam.gd" type="Script" id=1]
+
+[sub_resource type="CylinderMesh" id=1]
+
+top_radius = 1.0
+bottom_radius = 1.0
+height = 2.0
+radial_segments = 64
+rings = 4
+
+[sub_resource type="SphereMesh" id=2]
+
+radius = 1.0
+height = 2.0
+radial_segments = 64
+rings = 32
+is_hemisphere = false
+
+[sub_resource type="Animation" id=3]
+
+resource_name = "charging"
+length = 2.0
+loop = true
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("base/rotary:rotation_deg")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( -0.264417, -2.48869, 0.0114923 ), Vector3( -1.97432, 0, 0 ), Vector3( -3.34801, 0, 0 ), Vector3( -0.264417, -2.48869, 0.0114923 ), Vector3( 0, 0, 0 ), Vector3( -0.264417, -2.48869, 0.0114923 ), Vector3( -1.97432, 0, 0 ), Vector3( -5.94427, 0, 0 ), Vector3( -0.264417, -2.48869, 0.0114923 ), Vector3( 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+
+resource_name = "normal"
+length = 1.0
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("base/rotary:rotation_deg")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+
+resource_name = "stunned"
+length = 1.0
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("base/rotary:rotation_deg")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 31.7543, -0.00415981, -0.00916534 ), Vector3( -58.2545, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=6]
+
+resource_name = "stunned_loop"
+length = 3.0
+loop = true
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("base/rotary:rotation_deg")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4, 0.8, 1.3, 1.6, 2, 2.4, 2.8, 3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -58.2545, 0, 0 ), Vector3( -38.9699, -0.699931, -3.18343 ), Vector3( -45.6993, 10.9294, -4.00244 ), Vector3( -33.0487, 3.97661, -0.584425 ), Vector3( -38.9699, -0.699931, -3.18343 ), Vector3( -45.6993, 10.9294, -4.00244 ), Vector3( -38.9699, -0.699931, -3.18343 ), Vector3( -45.6993, 10.9294, -4.00244 ), Vector3( -58.2545, 0, 0 ) ]
+}
+
+[node name="head" type="Spatial"]
+
+script = ExtResource( 1 )
+
+[node name="base" type="Spatial" parent="."]
+
+transform = Transform( 0.999998, 0.000104053, -0.00202625, 9.35684e-06, 0.998437, 0.0558901, 0.0020289, -0.05589, 0.998435, 0, 0, 0 )
+
+[node name="rotary" type="Spatial" parent="base"]
+
+transform = Transform( 0.999497, -0.0209797, 0.0237849, -0.00794758, 0.560338, 0.828226, -0.0307035, -0.827998, 0.55989, 0, 0, 0 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="camera" type="Camera" parent="base/rotary"]
+
+transform = Transform( 1, -7.27596e-12, 0, 0, 1, 0, 0, -3.72529e-09, 1, 0, 0, 0 )
+projection = 0
+fov = 66.2
+near = 0.1
+far = 100.0
+keep_aspect = 1
+current = false
+cull_mask = 1048575
+environment = null
+h_offset = 0.0
+v_offset = 0.0
+doppler/tracking = 0
+_sections_unfolded = [ "Transform", "doppler" ]
+
+[node name="ray" type="RayCast" parent="base/rotary/camera"]
+
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+enabled = false
+cast_to = Vector3( 0, -1, 0 )
+collision_layer = 1
+type_mask = 15
+_sections_unfolded = [ "Transform" ]
+
+[node name="arms" type="MeshInstance" parent="base"]
+
+transform = Transform( -0.0206204, 0.0379393, -0.00028672, 0, 0.000326332, 0.0431806, 0.0379405, 0.0206198, -0.000155831, 0.151737, -0.0810985, -0.160453 )
+layers = 1
+material_override = null
+cast_shadow = 1
+extra_cull_margin = 0.0
+use_in_baked_light = false
+lod_min_distance = 0.0
+lod_min_hysteresis = 0.0
+lod_max_distance = 0.0
+lod_max_hysteresis = 0.0
+mesh = SubResource( 1 )
+skeleton = NodePath("..")
+material/0 = null
+
+[node name="hand" type="MeshInstance" parent="base/arms"]
+
+transform = Transform( -0.571101, -2.89491e-10, 1.0508, 1.05077, 0.00903804, 0.571084, -0.00794099, 1.19593, -0.00431588, 0.0926237, -1.5643, 0.22939 )
+layers = 1
+material_override = null
+cast_shadow = 1
+extra_cull_margin = 0.0
+use_in_baked_light = false
+lod_min_distance = 0.0
+lod_min_hysteresis = 0.0
+lod_max_distance = 0.0
+lod_max_hysteresis = 0.0
+mesh = SubResource( 2 )
+skeleton = NodePath("..")
+material/0 = null
+
+[node name="anim" type="AnimationPlayer" parent="."]
+
+playback_process_mode = 1
+playback_default_blend_time = 0.0
+root_node = NodePath("..")
+anims/charging = SubResource( 3 )
+anims/normal = SubResource( 4 )
+anims/stunned = SubResource( 5 )
+anims/stunned_loop = SubResource( 6 )
+next/stunned = "stunned_loop"
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = "normal"
+
+

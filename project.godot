@@ -1,0 +1,46 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=3
+
+[application]
+
+config/name="Pama"
+run/main_scene="res://system/main.tscn"
+boot_splash/image="res://ui/sprites/splash_img.png"
+boot_splash/fullsize=false
+config/icon="res://icon.png"
+
+[autoload]
+
+gamestate="*res://system/gamestate.gd"
+
+[gdnative]
+
+singletons=[  ]
+
+[input]
+
+walk_forward=[ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"unicode":0,"echo":false,"script":null)
+ ]
+walk_backward=[ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+walk_strafeleft=[ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"unicode":0,"echo":false,"script":null)
+ ]
+walk_straferight=[ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"unicode":0,"echo":false,"script":null)
+ ]
+skill_a=[ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
+ ]
+
+[locale]
+
+translations=PoolStringArray( "res://system/messages/text.en.translation", "res://system/messages/text.es.translation", "res://system/messages/text.de.translation", "res://system/messages/text.it.translation", "res://system/messages/text.ja.translation", "res://system/messages/text.ko.translation" )
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"
