@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://actors/fps_cam.gd" type="Script" id=1]
+[ext_resource path="res://actors/camera_fx/stunt.tres" type="Environment" id=2]
 
 [sub_resource type="CylinderMesh" id=1]
 
@@ -57,7 +58,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id=5]
 
 resource_name = "stunned"
-length = 1.0
+length = 0.5
 loop = false
 step = 0.1
 tracks/0/type = "value"
@@ -66,10 +67,21 @@ tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.5 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( 0, 0, 0 ), Vector3( 31.7543, -0.00415981, -0.00916534 ), Vector3( -58.2545, 0, 0 ) ]
+"values": [ Vector3( 0, 0, 0 ), Vector3( 43.1219, -0.0227136, -0.0414789 ), Vector3( 5.92139, 0.0604001, -0.10168 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("base/rotary/camera:environment")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ ExtResource( 2 ) ]
 }
 
 [sub_resource type="Animation" id=6]
@@ -84,15 +96,16 @@ tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.4, 0.8, 1.3, 1.6, 2, 2.4, 2.8, 3 ),
+"times": PoolRealArray( 0, 0.4, 0.8, 1.1, 1.6, 2, 2.4, 2.8, 3.1 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector3( -58.2545, 0, 0 ), Vector3( -38.9699, -0.699931, -3.18343 ), Vector3( -45.6993, 10.9294, -4.00244 ), Vector3( -33.0487, 3.97661, -0.584425 ), Vector3( -38.9699, -0.699931, -3.18343 ), Vector3( -45.6993, 10.9294, -4.00244 ), Vector3( -38.9699, -0.699931, -3.18343 ), Vector3( -45.6993, 10.9294, -4.00244 ), Vector3( -58.2545, 0, 0 ) ]
+"values": [ Vector3( 5.92139, 0.0604001, -0.10168 ), Vector3( 3.47457, -0.515387, -3.73362 ), Vector3( 10.6834, 7.78438, 5.21299 ), Vector3( 4.73859, 3.36615, 1.79287 ), Vector3( 12.8014, -0.52931, -3.83849 ), Vector3( 19.4096, 8.10852, 6.45441 ), Vector3( 5.44019, -0.516874, -3.75537 ), Vector3( 15.6102, 7.94154, 5.90105 ), Vector3( 5.92139, 0.0604001, -0.10168 ) ]
 }
 
 [node name="head" type="Spatial"]
 
 script = ExtResource( 1 )
+_sections_unfolded = [ "Transform" ]
 
 [node name="base" type="Spatial" parent="."]
 
@@ -100,12 +113,11 @@ transform = Transform( 0.999998, 0.000104053, -0.00202625, 9.35684e-06, 0.998437
 
 [node name="rotary" type="Spatial" parent="base"]
 
-transform = Transform( 0.999497, -0.0209797, 0.0237849, -0.00794758, 0.560338, 0.828226, -0.0307035, -0.827998, 0.55989, 0, 0, 0 )
+transform = Transform( 0.999996, 0.0018834, 0.00104856, -0.00176518, 0.994664, -0.103164, -0.00123726, 0.103162, 0.994664, 0, 0, 0 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="camera" type="Camera" parent="base/rotary"]
 
-transform = Transform( 1, -7.27596e-12, 0, 0, 1, 0, 0, -3.72529e-09, 1, 0, 0, 0 )
 projection = 0
 fov = 66.2
 near = 0.1
@@ -131,6 +143,7 @@ _sections_unfolded = [ "Transform" ]
 [node name="arms" type="MeshInstance" parent="base"]
 
 transform = Transform( -0.0206204, 0.0379393, -0.00028672, 0, 0.000326332, 0.0431806, 0.0379405, 0.0206198, -0.000155831, 0.151737, -0.0810985, -0.160453 )
+visible = false
 layers = 1
 material_override = null
 cast_shadow = 1
@@ -147,6 +160,7 @@ material/0 = null
 [node name="hand" type="MeshInstance" parent="base/arms"]
 
 transform = Transform( -0.571101, -2.89491e-10, 1.0508, 1.05077, 0.00903804, 0.571084, -0.00794099, 1.19593, -0.00431588, 0.0926237, -1.5643, 0.22939 )
+visible = false
 layers = 1
 material_override = null
 cast_shadow = 1

@@ -13,6 +13,7 @@ var satyr = false
 #body building
 var head
 var skin
+var model
 
 var next_sync = 0.0
 
@@ -81,19 +82,80 @@ var label_text = ""
 var billboard
 
 func anim_head(anim):
-#	print("anim request: " +str(anim))
 	if anim == "stop":
 		camera.reset_rotary()
-#		camera.get_node("anim").play("normal")
-#		camera.get_node("anim").stop()
 		return
 	camera.get_node("anim").play(anim)
 
+func anim_body(anim):
+	camera.skin.get_node("AnimationPlayer").play(anim)
+	
+func set_satyr_local():#set skin, clothes and for the satyr player (fps)
+	print(str(get_name()) + " is satyr player")
+	var model = my_cd["satyr_skin"]
+	var skin_db = gamestate.main.skin_satyr
+	if !skin_db.has(model):
+		model = "default"
+	model = load(skin_db[model]).instance()
+	if model.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
+		model.get_node("rig/Skeleton/head").queue_free()
+	camera.skin = model
+	camera.base.add_child(model)
+
+func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we see)
+	print(str(get_name()) + " is satyr dummy")
+	var model = my_cd["satyr_skin"]
+	var skin_db = gamestate.main.skin_satyr
+	if !skin_db.has(model):
+		model = "default"
+	model = load(skin_db[model]).instance()
+	model.set_rotation_deg(Vector3(0,180,0))
+	get_node("body").add_child(model)
+
+func set_nymph_local():#set skin, clothes and for the nymph player (fps)
+	print(str(get_name()) + " is nymph player")
+
+	var model = my_cd["nymph_skin"]
+	var skin_db = gamestate.main.skin_nymph
+	if !skin_db.has(model):
+		skin = "default"
+	model = load(skin_db[model]).instance()
+	if model.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
+		model.get_node("rig/Skeleton/head").queue_free()
+	camera.skin = model
+	camera.base.add_child(model)
+
+
+func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we see)
+	print(str(get_name()) + " is nymph dummy")
+#	print(my_cd["nymph_skin"])
+	var model = my_cd["nymph_skin"]
+	var skin_db = gamestate.main.skin_nymph
+	if !skin_db.has(model):
+		model = "default"
+	model = load(skin_db[model]).instance()
+	model.set_rotation_deg(Vector3(0,180,0))
+	get_node("body").add_child(model)
 
 func _enter_tree():
+	
+#	if human_control:
+#		if get_name() == "1":
+#			set_satyr_player()
+#		else:
+#			set_nymph_player()
+#	else:
+#		if get_name() == "1":
+#			set_satyr_dummy()
+#		else:
+#			set_nymph_dummy()
+
+
+
 	if (get_name() == "1" ) and is_network_master():
 		satyr = true
 		SPEED[1] = satyr_basespeed
+		
 	else:#not a satyr: assume it's a nymph
 		set_meta("nymph", 0)
 #	set_fixed_process(true)#was renamed 1st october
@@ -101,10 +163,19 @@ func _enter_tree():
 	skin = SpatialMaterial.new()
 	skin.set_albedo(my_cd["color"])
 	if get_name() == str(get_tree().get_network_unique_id()):#hey,that's me!
-		my_entrance()
+#		my_entrance()
 		human_control = true
-#		label = gamestate.gui.get_node("ingame/name")
-#		print(value.get_children())
+		set_fps_cam()
+		if get_name() == "1":
+			set_satyr_local()
+		else:
+			set_nymph_local()
+	else:
+		if get_name() == "1":
+			set_satyr_remote()
+		else:
+			set_nymph_remote()
+
 	get_node("body/mesh").set_surface_material(0, skin)
 	get_node("body/head").set_surface_material(0, skin)
 	get_node("body/head2").set_surface_material(0, skin)
@@ -126,13 +197,16 @@ func player_switch(from, to):
 		if (from == idx_stat["walking"]) or (from == idx_stat["idle"]):
 			if to == idx_stat["charging"]:
 				anim_head("charging")
+				anim_body("run")
 #				camera.get_node("anim").play("charging")
 		elif from == idx_stat["charging"]:
 			if to == idx_stat["stunned"]:
 				anim_head("stunned")
+				anim_body("idle")
 #				camera.get_node("anim").play("stunned")
 
 			else:
+				anim_body("idle")
 				anim_head("stop")
 #				camera.get_node("anim").stop()
 		elif from == idx_stat["stunned"]:
@@ -228,8 +302,7 @@ func satyr_process(delta):
 
 
 
-
-func my_entrance():
+func set_fps_cam():
 	player = true
 	head = load("res://actors/fps_cam.tscn").instance()
 	head.set_translation(get_node("headpos").get_translation())
@@ -237,7 +310,21 @@ func my_entrance():
 	head.get_node("base/arms/hand").set_surface_material(0, skin)
 	get_node("body").hide()#I don't need to see my own "external" body
 	add_child(head)
-#	get_node("body").add_child(model)# my own "internal body" I can only see
+
+
+func my_entrance():
+	if get_name() == "1":
+		set_satyr_local()
+	else:
+		set_nymph_local()
+
+	player = true
+	head = load("res://actors/fps_cam.tscn").instance()
+	head.set_translation(get_node("headpos").get_translation())
+	head.get_node("base/arms").set_surface_material(0, skin)
+	head.get_node("base/arms/hand").set_surface_material(0, skin)
+	get_node("body").hide()#I don't need to see my own "external" body
+	add_child(head)
 
 
 func _ready():

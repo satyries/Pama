@@ -4,13 +4,17 @@ const SENSITIVITY = 0.3;
 #to do:
 #reset_rotary switch = separate task in process.stop animation, interpolate vector3 of rotary
 #animation set from cubic frame
-onready var player	= get_node("..")
-onready var base	= get_node("base")
-onready var camera	= get_node("base/rotary/camera")
-onready var raycast	= get_node("base/rotary/camera/ray")
-onready var rotary = get_node("base/rotary")
-#onready var camera	= get_node("base/camera")
-#onready var raycast	= get_node("base/camera/ray")
+#onready var player	= get_node("..")
+#onready var base	= get_node("base")
+#onready var camera	= get_node("base/rotary/camera")
+#onready var raycast	= get_node("base/rotary/camera/ray")
+#onready var rotary = get_node("base/rotary")
+var player
+var base
+var camera
+var raycast
+var rotary
+var skin
 
 var rset_rotary_switch = false
 
@@ -20,6 +24,7 @@ var pitch = 0.0;
 var yaw = 0.0;
 var origin = Vector3();
 
+onready var fx_stunt = preload("res://actors/camera_fx/stunt.tres")
 
 func reset_rotary():
 	rset_rotary_switch = true
@@ -36,6 +41,7 @@ func reset_rotary():
 func _process(delta):
 #	print("pending process each cycle: " + str(pending_processes.size()))
 	if rset_rotary_switch:
+		
 		var straight = Vector3(0,0,0)
 		var rota_deg = rotary.get_rotation_deg()
 		
@@ -44,6 +50,7 @@ func _process(delta):
 
 			rotary.set_rotation_deg(rota_deg) 
 		else:
+			camera.set_environment(null)
 			rotary.set_rotation_deg(straight)
 			rset_rotary_switch = false
 			if pending_processes.has("reset_rotary"):
@@ -58,6 +65,10 @@ func _process(delta):
 
 
 func _ready():
+
+	skin.set_global_transform(get_node("../feetpos").get_global_transform())
+	skin.set_rotation_deg(get_node("../feetpos").get_rotation_deg())
+
 	if (typeof(player) == TYPE_NODE_PATH):
 		player = get_node(player)
 	if (typeof(base) == TYPE_NODE_PATH):
@@ -78,6 +89,11 @@ func _ready():
 
 
 func _enter_tree():
+	player	= get_node("..")
+	base	= get_node("base")
+	camera	= get_node("base/rotary/camera")
+	raycast	= get_node("base/rotary/camera/ray")
+	rotary = get_node("base/rotary")
 	get_node("..").camera = self
 
 func _exit_tree():

@@ -33,7 +33,7 @@ visible = false
 
 [node name="DirectionalLight" type="DirectionalLight" parent="world"]
 
-transform = Transform( -0.865009, 0.501753, -0.00170001, 0.321394, 0.55667, 0.766044, 0.385311, 0.662089, -0.642785, 0, 8.90161, 0 )
+transform = Transform( 0.623013, -0.733525, 0.271654, 0.321394, 0.55667, 0.766044, -0.713134, -0.389948, 0.582563, 0, 8.90161, 0 )
 layers = 1
 light_color = Color( 1, 0.885498, 0.738281, 1 )
 light_energy = 1.0
