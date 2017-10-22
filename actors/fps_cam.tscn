@@ -109,11 +109,10 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="base" type="Spatial" parent="."]
 
-transform = Transform( 0.999998, 0.000104053, -0.00202625, 9.35684e-06, 0.998437, 0.0558901, 0.0020289, -0.05589, 0.998435, 0, 0, 0 )
+_sections_unfolded = [ "Transform" ]
 
 [node name="rotary" type="Spatial" parent="base"]
 
-transform = Transform( 0.999996, 0.0018834, 0.00104856, -0.00176518, 0.994664, -0.103164, -0.00123726, 0.103162, 0.994664, 0, 0, 0 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="camera" type="Camera" parent="base/rotary"]

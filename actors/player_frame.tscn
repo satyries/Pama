@@ -56,6 +56,7 @@ linear_damp = -1.0
 angular_velocity = Vector3( 0, 0, 0 )
 angular_damp = -1.0
 script = ExtResource( 1 )
+_sections_unfolded = [ "Transform" ]
 
 [node name="col" type="CollisionShape" parent="."]
 
@@ -86,7 +87,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.662794, 0 )
 
 [node name="feetpos" type="Position3D" parent="."]
 
-transform = Transform( -1, 0, -8.74228e-08, -1.12035e-08, 0.991754, 0.128153, 8.67019e-08, 0.128153, -0.991754, 0, -0.269722, 0.23036 )
+transform = Transform( -1, -1.74533e-08, 8.74228e-08, -1.74533e-08, 1, 0, -8.74228e-08, -1.52582e-15, -1, 0, 0, 0 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="body" type="Spatial" parent="."]

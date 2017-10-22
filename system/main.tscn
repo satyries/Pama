@@ -25,8 +25,6 @@ size_flags_vertical = 1
 
 [node name="ingame" parent="gui" instance=ExtResource( 2 )]
 
-visible = false
-
 [node name="world" type="Spatial" parent="."]
 
 [node name="Scene Root" parent="world" instance=ExtResource( 3 )]

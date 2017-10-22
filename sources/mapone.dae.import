@@ -7,7 +7,7 @@ path="res://.import/mapone.dae-8741b257cb52e968ed8905689020c9d5.scn"
 [params]
 
 nodes/root_type="Spatial"
-nodes/root_name="Scene Root"
+nodes/root_name="map"
 nodes/custom_script=""
 nodes/storage=0
 materials/location=1

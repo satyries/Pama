@@ -12,7 +12,7 @@ var satyr = false
 
 #body building
 var head
-var skin
+var skin#to be removed
 var model
 
 var next_sync = 0.0
@@ -34,12 +34,15 @@ var stun_delay = [0, 5]
 sync var status = 0
 const idx_stat = {	
 					"idle":0,#satyr/nymph
-					"walking":1,#satyrnymph
+					"walking":1,#satyr
 					"stealth":2,#nymph
 					"running":3,#nymph
 					"charging":4,#satyr
 					"stunned":5#satyr
 				}
+
+
+
 
 
 var respawn_switch = false
@@ -57,24 +60,10 @@ sync var yaw = 0.0
 sync var pos = Vector3()
 var old_pos = Vector3()
 
-#sync var linear_velocity = Vector3()
 sync var l_velocity = Vector3()
 slave var dir = Vector3()
 slave var input = [0, 0]
-#slave var raydir = [Vector3(), Vector3()]
 
-#var playerAnimation
-
-#var player_id = -1
-#var player_name = ""
-#var player_health = 100.0
-#var player_lastHit = 0.0
-#var player_ani = ""
-#var player_curAni = ""
-#var player_nextSpawn = 0.0
-#var player_nextClientDataSync = 0.0
-
-#variables related to dummies (playerframe controlled by the server on other clients)
 var old_status = 0
 
 #debug stuff
@@ -88,19 +77,29 @@ func anim_head(anim):
 	camera.get_node("anim").play(anim)
 
 func anim_body(anim):
-	camera.skin.get_node("AnimationPlayer").play(anim)
-	
+	camera.model.get_node("AnimationPlayer").play(anim)
+
+func set_camera_body(bodymodel):
+	if bodymodel.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
+		bodymodel.get_node("rig/Skeleton/head").queue_free()
+	camera.model = bodymodel
+	camera.skeleton = bodymodel.get_node("rig/Skeleton")
+	camera.base.add_child(bodymodel)
+
+func set_nymph_local():#set skin, clothes and for the nymph player (fps)
+	var skin_id = my_cd["nymph_skin"]
+	var skin_db = gamestate.main.skin_nymph
+	if !skin_db.has(model):
+		model = "default"
+	set_camera_body(load(skin_db[model]).instance())
+
 func set_satyr_local():#set skin, clothes and for the satyr player (fps)
-	print(str(get_name()) + " is satyr player")
+#	print(str(get_name()) + " is satyr player")
 	var model = my_cd["satyr_skin"]
 	var skin_db = gamestate.main.skin_satyr
 	if !skin_db.has(model):
 		model = "default"
-	model = load(skin_db[model]).instance()
-	if model.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
-		model.get_node("rig/Skeleton/head").queue_free()
-	camera.skin = model
-	camera.base.add_child(model)
+	set_camera_body(load(skin_db[model]).instance())
 
 func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we see)
 	print(str(get_name()) + " is satyr dummy")
@@ -112,18 +111,7 @@ func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we s
 	model.set_rotation_deg(Vector3(0,180,0))
 	get_node("body").add_child(model)
 
-func set_nymph_local():#set skin, clothes and for the nymph player (fps)
-	print(str(get_name()) + " is nymph player")
 
-	var model = my_cd["nymph_skin"]
-	var skin_db = gamestate.main.skin_nymph
-	if !skin_db.has(model):
-		skin = "default"
-	model = load(skin_db[model]).instance()
-	if model.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
-		model.get_node("rig/Skeleton/head").queue_free()
-	camera.skin = model
-	camera.base.add_child(model)
 
 
 func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we see)
@@ -138,20 +126,6 @@ func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we s
 	get_node("body").add_child(model)
 
 func _enter_tree():
-	
-#	if human_control:
-#		if get_name() == "1":
-#			set_satyr_player()
-#		else:
-#			set_nymph_player()
-#	else:
-#		if get_name() == "1":
-#			set_satyr_dummy()
-#		else:
-#			set_nymph_dummy()
-
-
-
 	if (get_name() == "1" ) and is_network_master():
 		satyr = true
 		SPEED[1] = satyr_basespeed
@@ -163,7 +137,6 @@ func _enter_tree():
 	skin = SpatialMaterial.new()
 	skin.set_albedo(my_cd["color"])
 	if get_name() == str(get_tree().get_network_unique_id()):#hey,that's me!
-#		my_entrance()
 		human_control = true
 		set_fps_cam()
 		if get_name() == "1":
@@ -183,40 +156,42 @@ func _enter_tree():
 	set_process(true);
 	set_physics_process(true)
 
-func set_status(req_status):
+func set_status(req_status,strafe):
 	if player:
-		player_switch(status, idx_stat[req_status])
+		player_switch(status, idx_stat[req_status], strafe)
 	else:
-		dummy_switch(status, idx_stat[req_status])
+		dummy_switch(status, idx_stat[req_status], strafe)
 	rset_unreliable("status", idx_stat[req_status])
 
 
 
-func player_switch(from, to):
+func player_switch(from, to, strafe):
 	if satyr:
 		if (from == idx_stat["walking"]) or (from == idx_stat["idle"]):
 			if to == idx_stat["charging"]:
 				anim_head("charging")
 				anim_body("run")
-#				camera.get_node("anim").play("charging")
 		elif from == idx_stat["charging"]:
 			if to == idx_stat["stunned"]:
 				anim_head("stunned")
 				anim_body("idle")
-#				camera.get_node("anim").play("stunned")
-
 			else:
 				anim_body("idle")
 				anim_head("stop")
-#				camera.get_node("anim").stop()
 		elif from == idx_stat["stunned"]:
-#			camera.get_node("anim").stop()
 			anim_head("stop")
-#			camera.get_node("anim").stop()
-#	print("player switched from: " +str(from) + " to " + str(to))
+	else:
+		if (to == idx_stat["running"]) and (from != to):
+			anim_body("run" + str(strafe))
 
-func dummy_switch(from, to):
-	print("dummy switched from: " +str(from) + " to " + str(to))
+func dummy_switch(from, to, strafe):
+	if my_class == "satyr":
+		if status == idx_stat["walking"]:
+			pass
+	else:
+		if status == idx_stat["running"]:
+			pass
+#	print("dummy switched from: " +str(from) + " to " + str(to))
 
 func dummy_process(delta):
 	if my_class == "satyr":
@@ -228,7 +203,11 @@ func dummy_process(delta):
 			get_node("body/head2").set_surface_material(0, skin)
 	else:
 		pass
-
+		
+	if old_status != status:
+#		print("status changed for dummy")
+		pass
+	old_status = status
 #func dummy_switch(from,to):#called everytime status switch from/to something
 #	if from == idx_stat["stunned"]:
 #		skin = SpatialMaterial.new()
@@ -252,7 +231,7 @@ func _process(delta):
 func satyr_charging(delta):
 	if charge_delay[0] > charge_delay[1]:#charge ended with no result
 		charge_delay[0] = 0
-		set_status("idle")
+		set_status("idle", "")
 		charge_collide = false
 		SPEED[0] = SPEED[1]#speed return normal
 	else:#continous
@@ -263,7 +242,7 @@ func satyr_charging(delta):
 #				print(collide_r.get_meta_list())
 				if collide_r.has_meta("nymph"):
 #					print("it's a nymph!")
-					set_status("idle")
+					set_status("idle", "")
 					charge_delay[0] = 0
 					charge_collide = false
 					SPEED[0] = SPEED[1]#speed return normal
@@ -271,22 +250,25 @@ func satyr_charging(delta):
 			if collide_l != null:
 				if collide_l.has_meta("nymph"):
 #					print("it's a nymph!")
-					set_status("idle")
+					set_status("idle", "")
 					charge_delay[0] = 0
 					charge_collide = false
 					SPEED[0] = SPEED[1]#speed return normal
 					return
-			set_status("stunned")
+			set_status("stunned", "")
 			charge_delay[0] = 0
 			charge_collide = false
 			SPEED[0] = SPEED[1]#speed return normal
 		charge_delay[0] +=1*delta
 
 func satyr_process(delta):
+	
+	
+#	print("pos: " +str()
 	if status == idx_stat["stunned"]:
 		if stun_delay[0] > stun_delay[1]:#stun ended
 			stun_delay[0] = 0
-			set_status("idle")
+			set_status("idle", "")
 			SPEED[0] = SPEED[1]#speed return normal
 		else:
 			stun_delay[0] +=1*delta
@@ -295,7 +277,7 @@ func satyr_process(delta):
 		satyr_charging(delta)
 	elif (status == idx_stat["idle"]) or (status == idx_stat["walking"]):
 		if input[0] and !gamestate.main.menu:
-			set_status("charging")
+			set_status("charging", "")
 			charge_delay[0] = 0
 			SPEED[0] = SPEED[2]#speed goes rabid (charge mode)
 
@@ -305,26 +287,13 @@ func satyr_process(delta):
 func set_fps_cam():
 	player = true
 	head = load("res://actors/fps_cam.tscn").instance()
-	head.set_translation(get_node("headpos").get_translation())
+#	head.set_translation(get_node("headpos").get_translation())
 	head.get_node("base/arms").set_surface_material(0, skin)
 	head.get_node("base/arms/hand").set_surface_material(0, skin)
 	get_node("body").hide()#I don't need to see my own "external" body
 	add_child(head)
 
 
-func my_entrance():
-	if get_name() == "1":
-		set_satyr_local()
-	else:
-		set_nymph_local()
-
-	player = true
-	head = load("res://actors/fps_cam.tscn").instance()
-	head.set_translation(get_node("headpos").get_translation())
-	head.get_node("base/arms").set_surface_material(0, skin)
-	head.get_node("base/arms/hand").set_surface_material(0, skin)
-	get_node("body").hide()#I don't need to see my own "external" body
-	add_child(head)
 
 
 func _ready():
@@ -334,31 +303,7 @@ func _ready():
 		chargeray_l.set_enabled(true)
 		chargeray_r.set_enabled(true)
 
-#	set_fixed_process(true)
-#	if get_name() != str(get_tree().get_network_unique_id()):
-#		yield(get_tree(), "idle_frame")
-#		yield(get_tree(), "idle_frame")
-#		var plane = get_node("body/plane")
-#		var viewport = get_node("Viewport")
-#		print(plane)
-#		plane.material_override.albedo_texture = viewport.get_texture()
-
-
-
-
-
-
-func _fixed_process_bk(delta):
-	if human_control:
-		if (gamestate.time > next_sync):
-			rset_unreliable("yaw", yaw)
-			next_sync = gamestate.time+1/30.0;
-	else:
-		set_rotation_deg(Vector3(0, yaw, 0))
-
 func _physics_process(delta):
-#func _fixed_process(delta):#renamed 1st oct
-	
 	if is_network_master():
 		var cam_trans = camera.camera.get_global_transform();
 #		raydir = [
@@ -406,6 +351,7 @@ func _physics_process(delta):
 func satyr_if(state):#inegrate forces for satyr
 	var delta = state.get_step();
 	var lv = get_linear_velocity()
+	var strafe = ""
 	var request_status = null#insted of costantly set_status("stuf") for each case.. we just set a request ticket
 	if is_network_master():
 		var basis = camera.camera.get_global_transform().basis;
@@ -453,7 +399,7 @@ func satyr_if(state):#inegrate forces for satyr
 		return
 	if status != idx_stat[str(request_status)]:
 ##		set_status_id(request_status)
-		set_status(request_status)
+		set_status(request_status, strafe)
 
 
 
@@ -461,11 +407,13 @@ func nymph_if(state):#integrate forces for nymph
 	var delta = state.get_step();
 	var lv = get_linear_velocity()
 	var request_status = null#insted of costantly set_status("stuf") for each case.. we just set a request ticket
+	var strafe = ""
 	if is_network_master():
 		var basis = camera.camera.get_global_transform().basis;
 		dir = Vector3()
-		if (status == idx_stat["idle"]) or (status == idx_stat["walking"]):
+		if  0 == 0:#for now nymph always move.. this will help us sort things later
 			var moving = false#we assume no directional key was press...
+			
 			if Input.is_action_pressed("walk_forward"):
 				moving = true
 				dir -= basis[2]
@@ -474,14 +422,20 @@ func nymph_if(state):#integrate forces for nymph
 				dir += basis[2];
 			if Input.is_action_pressed("walk_strafeleft"):
 				moving = true
+				strafe = ".l"
 				dir -= basis[0]
 			if Input.is_action_pressed("walk_straferight"):
 				moving = true
+				strafe = ".r"
 				dir += basis[0]
 			if moving:#...we assumed wrong
-				request_status = "walking"
+				if Input.is_action_pressed("stealth_mode"):
+					request_status = "stealth"
+				else:
+					request_status = "running"
 			else:#indeed wasn't moving, so...
 				request_status = "idle"
+#			print("player nymph will request" + str(request_status))
 		dir.y = 0
 		dir = dir.normalized()
 		rset_unreliable("dir", dir);
@@ -503,7 +457,7 @@ func nymph_if(state):#integrate forces for nymph
 	if request_status == null:
 		return
 	if status != idx_stat[str(request_status)]:
-		set_status(request_status)
+		set_status(request_status, strafe)
 
 
 

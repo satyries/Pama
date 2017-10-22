@@ -7,7 +7,7 @@ var locales = ["en","es","de","it","ja","ko"]
 var models = {"nymph_base":"res://sources/characters/nymph.tscn", "satyr_base":"res://sources/characters/nymph.tscn"}
 
 var skin_nymph = {"default":"res://sources/characters/nymph.tscn", "nymph_extra":"res://noneyet"}
-var skin_satyr = {"default":"res://sources/characters/nymph.tscn", "satyr_extra":"res://noneyet"}
+var skin_satyr = {"default":"res://sources/characters/satyr.tscn", "satyr_extra":"res://noneyet"}
 
 func _enter_tree():
 	TranslationServer.set_locale("en")
