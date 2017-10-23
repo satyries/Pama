@@ -14,7 +14,7 @@ var satyr = false
 var head
 var skin#to be removed
 var model
-
+var body_animation#if dummy the model is 
 var next_sync = 0.0
 
 var human_control = false#on server every "player frame" is considered under human control
@@ -33,14 +33,28 @@ var charge_collide = false#detect if the satyr is colliding against something (t
 var stun_delay = [0, 5]
 sync var status = 0
 const idx_stat = {	
-					"idle":0,#satyr/nymph
-					"walking":1,#satyr
-					"stealth":2,#nymph
-					"running":3,#nymph
-					"charging":4,#satyr
-					"stunned":5#satyr
+				"idle"		:0,#satyr/nymph
+				"walking"	:1,#satyr
+				"stealth"	:2,#nymph
+				"running"	:3,#nymph
+				"charging"	:4,#satyr
+				"stunned"	:5#satyr
 				}
 
+sync var anim = 0
+const idx_anim = {
+#general
+					"idle"		:0,#
+#satyr
+					"walk"		:11,
+					"charge"	:12,
+					"crash"		:13,
+#nymph
+					"stealth"	:30,
+					"run"		:31,
+#close index
+					"tail":99
+				}
 
 
 
@@ -77,7 +91,13 @@ func anim_head(anim):
 	camera.get_node("anim").play(anim)
 
 func anim_body(anim):
-	camera.model.get_node("AnimationPlayer").play(anim)
+	print("we got a request of: " +str(anim))
+#	camera.model.get_node("AnimationPlayer").play(anim)
+	
+	body_animation.play(anim)
+
+#	rset_unreliable("status", idx_stat[req_status])
+
 
 func set_camera_body(bodymodel):
 	if bodymodel.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
@@ -85,6 +105,7 @@ func set_camera_body(bodymodel):
 	camera.model = bodymodel
 	camera.skeleton = bodymodel.get_node("rig/Skeleton")
 	camera.base.add_child(bodymodel)
+	body_animation = bodymodel.get_node("AnimationPlayer")
 
 func set_nymph_local():#set skin, clothes and for the nymph player (fps)
 	var skin_id = my_cd["nymph_skin"]
@@ -110,6 +131,7 @@ func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we s
 	model = load(skin_db[model]).instance()
 	model.set_rotation_deg(Vector3(0,180,0))
 	get_node("body").add_child(model)
+	body_animation = model.get_node("AnimationPlayer")
 
 
 
@@ -124,6 +146,7 @@ func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we s
 	model = load(skin_db[model]).instance()
 	model.set_rotation_deg(Vector3(0,180,0))
 	get_node("body").add_child(model)
+	body_animation = model.get_node("AnimationPlayer")
 
 func _enter_tree():
 	if (get_name() == "1" ) and is_network_master():
@@ -170,19 +193,30 @@ func player_switch(from, to, strafe):
 		if (from == idx_stat["walking"]) or (from == idx_stat["idle"]):
 			if to == idx_stat["charging"]:
 				anim_head("charging")
-				anim_body("run")
+				anim_body("charge")
+			elif to == idx_stat["walking"]:
+				anim_body("walk")
+			else:
+				anim_body("idle")
 		elif from == idx_stat["charging"]:
 			if to == idx_stat["stunned"]:
 				anim_head("stunned")
-				anim_body("idle")
+				anim_body("crash")
 			else:
 				anim_body("idle")
 				anim_head("stop")
 		elif from == idx_stat["stunned"]:
 			anim_head("stop")
 	else:
-		if (to == idx_stat["running"]) and (from != to):
-			anim_body("run" + str(strafe))
+		if (from == idx_stat["running"]) or (from == idx_stat["idle"]):
+			if to == idx_stat["running"]:
+				anim_body("run")
+			else:
+				anim_body("idle")
+
+#
+#		if (to == idx_stat["running"]) and (from != to):
+#			anim_body("run" + str(strafe))
 
 func dummy_switch(from, to, strafe):
 	if my_class == "satyr":
@@ -219,7 +253,7 @@ func dummy_process(delta):
 
 
 func _process(delta):
-#	print(yaw)
+
 	if !player:
 		dummy_process(delta)
 	if satyr:
