@@ -6905,7 +6905,7 @@ tracks/161/loop_wrap = true
 tracks/161/imported = true
 tracks/161/keys = PoolRealArray( 0, 1, 0, 0, 0, 0, 0, 0, 1, 0.446743, 0.446743, 0.446743, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0.446743, 0.446743, 0.446743 )
 
-[node name="Scene Root" type="Spatial"]
+[node name="Satyr" type="Spatial"]
 
 [node name="rig" type="Spatial" parent="."]
 

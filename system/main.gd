@@ -10,6 +10,7 @@ var skin_nymph = {"default":"res://sources/characters/nymph.tscn", "nymph_extra"
 var skin_satyr = {"default":"res://sources/characters/satyr.tscn", "satyr_extra":"res://noneyet"}
 
 func _enter_tree():
+#	Engine.set_target_fps(15)
 	TranslationServer.set_locale("en")
 	randomize()
 	get_node("gui").add_child(load("res://ui/lobby.tscn").instance())

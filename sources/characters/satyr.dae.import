@@ -7,8 +7,8 @@ path="res://.import/satyr.dae-19747fe5423856bdba71e861292d3c99.scn"
 [params]
 
 nodes/root_type="Spatial"
-nodes/root_name="Scene Root"
-nodes/custom_script=""
+nodes/root_name="Satyr"
+nodes/custom_script="res://sources/characters/chracter_import_satyr.gd"
 nodes/storage=0
 materials/location=1
 materials/storage=1

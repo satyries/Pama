@@ -8,7 +8,7 @@ path="res://.import/nymph.dae-00f542a1b4ccd00db59be48e90fd0908.scn"
 
 nodes/root_type="Spatial"
 nodes/root_name="nymph"
-nodes/custom_script=""
+nodes/custom_script="res://sources/characters/chracter_import_nymph.gd"
 nodes/storage=0
 materials/location=0
 materials/storage=1

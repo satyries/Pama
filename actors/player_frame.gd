@@ -42,6 +42,8 @@ const idx_stat = {
 				}
 
 sync var anim = 0
+var old_anim = 0
+
 const idx_anim = {
 #general
 					"idle"		:0,#
@@ -56,6 +58,7 @@ const idx_anim = {
 					"tail":99
 				}
 
+var idx_anim_db = []
 
 
 
@@ -93,11 +96,10 @@ func anim_head(anim):
 func anim_body(anim):
 	print("we got a request of: " +str(anim))
 #	camera.model.get_node("AnimationPlayer").play(anim)
-	
+
 	body_animation.play(anim)
-
-#	rset_unreliable("status", idx_stat[req_status])
-
+	rset_unreliable("anim", idx_anim[anim])
+	old_anim = idx_anim[anim]
 
 func set_camera_body(bodymodel):
 	if bodymodel.get_node("rig/Skeleton/head") != null:#model4fps: there's an head? let's cut it!
@@ -149,6 +151,18 @@ func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we s
 	body_animation = model.get_node("AnimationPlayer")
 
 func _enter_tree():
+	
+	#initiate animation database
+	var anim_db_size = 0
+	for i in idx_anim:
+		print(i)
+		if anim_db_size < idx_anim[i]:
+			print("resizing the db to: " +str(idx_anim[i]))
+			idx_anim_db.resize(idx_anim[i]+1)
+			anim_db_size = idx_anim[i]+1
+		idx_anim_db[idx_anim[i]] = i
+	#
+	print(idx_anim_db)
 	if (get_name() == "1" ) and is_network_master():
 		satyr = true
 		SPEED[1] = satyr_basespeed
@@ -259,7 +273,12 @@ func _process(delta):
 	if satyr:
 		satyr_process(delta)
 
-
+	if old_anim != anim:
+		if idx_anim_db[anim] != null:
+			body_animation.play(idx_anim_db[anim])
+		else:
+			print("there's a wrong request for animation")
+	old_anim = anim
 
 
 func satyr_charging(delta):
