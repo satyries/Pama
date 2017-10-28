@@ -156,7 +156,39 @@ func get_player_list():
 func get_player_name():
 	return player_name
 
+func nymph_captured(nymph):
+	if !get_tree().is_network_server():
+		return
+	#check if is a nymph that actually exist
+	var nymph_id = nymph.get_name()
+	if nymph_id != "1":
+		print("captured is not the satry")
+	if roster.get_node(nymph_id) != null:
+		print("captured nymph acutally exist")
+	
+#	is_captured(nymph.get_name())
 
+#	print("nymph \""+ str(nymph)+"\" was captured")
+#	print("her name is: " +str(nymph_id))
+#	print("captured nymph and satyr are lock in cinematic mode")
+#	print("show other player")
+	for p in players:#telling nymphs one of them is captured
+#						also to the one who's actually captured
+		rpc_id(p, "is_captured", nymph_id)
+	is_captured(nymph_id)
+
+func satyr_captured():
+	if !get_tree().is_network_server():
+		return
+	print("the satyr is caputred")
+	print("telling all other players")
+	print("captured satyr and winning nymph are lock in cinematic mode")
+
+remote func is_captured(who):
+	print("captured player...")
+	if who == str(get_tree().get_network_unique_id()):
+		print("that's me")
+	pass
 
 func get_world_spawnpoints():
 	#reset spawnpos

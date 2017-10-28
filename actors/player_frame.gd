@@ -3,6 +3,26 @@ extends RigidBody
 #server will set for us
 #var my_class
 #identity and data
+
+
+#TODO 1: (determine who get the score):
+#satyr in charge mode colliding with nymph = send server "gamestate.nymph_captured()"
+#	the check is directly done by the server/player (satyr)
+#satyr in stun mode colliding withg nymph = send server "gamestate.satyr_captured()"
+#	the check is done in the dummy (nymph) player on the server.
+
+#TODO 2: (process of the cinamatic mode):
+#	this draft is still not designed, it looks like will get very complicated with the main design
+#main design of the cinematic mode.
+#
+#this will always involve only TWO people: the satyr and the nymph.
+#	TWO different FPV camera in which will always involve the server (satyr's camera)
+#	the two locked players (satyr and nymph) will not able to move, so WASD input are ignored
+#	yaw and pitch for the camera will be limited (trough interpolation and hard limits) so the two will be forced to see each others
+
+#the rest of the players (expected to be all nymph) will see the TWO as dummies
+
+
 var position
 onready var name = get_name()
 var my_class
@@ -26,9 +46,11 @@ const nymph_basespeed = 2
 #status
 var charging = [false, 0]#[0]is charging?true/false [1] cooldown time
 var charge_timeout = 4#when charge reach this time, it cooldown
-
 var charge_delay = [0,4]
 var charge_collide = false#detect if the satyr is colliding against something (two rays)
+
+var cinematic = false#while this status is in effect, all features related to normal gameplay are disabled
+var cinematic_lock = [10,20]
 
 var stun_delay = [0, 5]
 sync var status = 0
@@ -88,17 +110,20 @@ var label_text = ""
 var billboard
 
 func anim_head(anim):
+	return
 	if anim == "stop":
 		camera.reset_rotary()
 		return
 	camera.get_node("anim").play(anim)
 
 func anim_body(anim):
-	print("we got a request of: " +str(anim))
-#	camera.model.get_node("AnimationPlayer").play(anim)
 
+#	print("we got a request of: " +str(anim))
+#	camera.model.get_node("AnimationPlayer").play(anim)
+	
 	body_animation.play(anim)
-	rset_unreliable("anim", idx_anim[anim])
+	if is_network_master():
+		rset_unreliable("anim", idx_anim[anim])
 	old_anim = idx_anim[anim]
 
 func set_camera_body(bodymodel):
@@ -125,7 +150,7 @@ func set_satyr_local():#set skin, clothes and for the satyr player (fps)
 	set_camera_body(load(skin_db[model]).instance())
 
 func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we see)
-	print(str(get_name()) + " is satyr dummy")
+#	print(str(get_name()) + " is satyr dummy")
 	var model = my_cd["satyr_skin"]
 	var skin_db = gamestate.main.skin_satyr
 	if !skin_db.has(model):
@@ -139,7 +164,7 @@ func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we s
 
 
 func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we see)
-	print(str(get_name()) + " is nymph dummy")
+#	print(str(get_name()) + " is nymph dummy")
 #	print(my_cd["nymph_skin"])
 	var model = my_cd["nymph_skin"]
 	var skin_db = gamestate.main.skin_nymph
@@ -155,14 +180,12 @@ func _enter_tree():
 	#initiate animation database
 	var anim_db_size = 0
 	for i in idx_anim:
-		print(i)
+#		print(i)
 		if anim_db_size < idx_anim[i]:
-			print("resizing the db to: " +str(idx_anim[i]))
+#			print("resizing the db to: " +str(idx_anim[i]))
 			idx_anim_db.resize(idx_anim[i]+1)
 			anim_db_size = idx_anim[i]+1
 		idx_anim_db[idx_anim[i]] = i
-	#
-	print(idx_anim_db)
 	if (get_name() == "1" ) and is_network_master():
 		satyr = true
 		SPEED[1] = satyr_basespeed
@@ -216,6 +239,10 @@ func player_switch(from, to, strafe):
 			if to == idx_stat["stunned"]:
 				anim_head("stunned")
 				anim_body("crash")
+				camera.cinematic_request()
+#				cinematic_lock = [yaw, 30]
+#				cinematic = true
+#				camera.cinematic_request()
 			else:
 				anim_body("idle")
 				anim_head("stop")
@@ -299,14 +326,16 @@ func satyr_charging(delta):
 					charge_delay[0] = 0
 					charge_collide = false
 					SPEED[0] = SPEED[1]#speed return normal
+					gamestate.nymph_captured(collide_r)
 					return
 			if collide_l != null:
 				if collide_l.has_meta("nymph"):
-#					print("it's a nymph!")
+					print("it's a nymph!")
 					set_status("idle", "")
 					charge_delay[0] = 0
 					charge_collide = false
 					SPEED[0] = SPEED[1]#speed return normal
+					gamestate.nymph_captured(collide_l)
 					return
 			set_status("stunned", "")
 			charge_delay[0] = 0
@@ -319,9 +348,12 @@ func satyr_process(delta):
 	
 #	print("pos: " +str()
 	if status == idx_stat["stunned"]:
+#		print("cinlock is: " + str(cinematic_lock[0])+"x"+str(cinematic_lock[1])+ ": :" + str(abs(yaw)))
 		if stun_delay[0] > stun_delay[1]:#stun ended
 			stun_delay[0] = 0
 			set_status("idle", "")
+			camera.end_cinematic()
+			anim_body("idle")
 			SPEED[0] = SPEED[1]#speed return normal
 		else:
 			stun_delay[0] +=1*delta
@@ -388,6 +420,11 @@ func _physics_process(delta):
 #			player_curAni = player_ani;
 
 	if body != null:
+#		if cinematic:
+#			print("cinlock is: " +str(cinematic_lock[0]))
+#			body.set_rotation(Vector3(0, deg2rad(cinematic_lock[0]), 0))
+#		else:
+#			body.set_rotation(Vector3(0, deg2rad(yaw), 0))
 		body.set_rotation(Vector3(0, deg2rad(yaw), 0))
 	if get_tree().is_network_server():
 		rset_unreliable("pos", get_translation())
@@ -407,6 +444,7 @@ func satyr_if(state):#inegrate forces for satyr
 	var strafe = ""
 	var request_status = null#insted of costantly set_status("stuf") for each case.. we just set a request ticket
 	if is_network_master():
+		assert(get_tree().is_network_server())
 		var basis = camera.camera.get_global_transform().basis;
 		dir = Vector3()
 		if status == idx_stat["charging"]:

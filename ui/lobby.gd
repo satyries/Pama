@@ -90,7 +90,7 @@ func _on_game_ended():
 	get_node("connect/join").disabled
 
 func _on_game_error(errtxt):
-	get_node("error").text=errtxt
+	get_node("error").set_text(str(errtxt))
 	get_node("error").popup_centered_minsize()
 
 func refresh_lobby():
