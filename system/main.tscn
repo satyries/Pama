@@ -1,13 +1,20 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://system/main.gd" type="Script" id=1]
-[ext_resource path="res://ui/ingame.tscn" type="PackedScene" id=2]
-[ext_resource path="res://draft/map.tscn" type="PackedScene" id=3]
+[ext_resource path="res://system/masterServer.gd" type="Script" id=2]
+[ext_resource path="res://ui/ingame.tscn" type="PackedScene" id=3]
 [ext_resource path="res://draft/arena_board/board.tscn" type="PackedScene" id=4]
 
 [node name="main" type="Node"]
 
 script = ExtResource( 1 )
+
+[node name="masterServer" type="HTTPRequest" parent="."]
+
+use_threads = false
+body_size_limit = -1
+max_redirects = 8
+script = ExtResource( 2 )
 
 [node name="gui" type="Control" parent="."]
 
@@ -23,11 +30,9 @@ mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 
-[node name="ingame" parent="gui" instance=ExtResource( 2 )]
+[node name="ingame" parent="gui" instance=ExtResource( 3 )]
 
 [node name="world" type="Spatial" parent="."]
-
-[node name="Scene Root" parent="world" instance=ExtResource( 3 )]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="world"]
 
@@ -53,7 +58,7 @@ directional_shadow_normal_bias = 0.8
 directional_shadow_bias_split_scale = 0.25
 directional_shadow_depth_range = 0
 directional_shadow_max_distance = 200.0
-_sections_unfolded = [ "Editor", "Light", "Shadow" ]
+_sections_unfolded = [ "Editor", "Transform" ]
 
 [node name="board" parent="world" instance=ExtResource( 4 )]
 

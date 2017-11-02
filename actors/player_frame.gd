@@ -239,7 +239,7 @@ func player_switch(from, to, strafe):
 			if to == idx_stat["stunned"]:
 				anim_head("stunned")
 				anim_body("crash")
-				camera.cinematic_request()
+				camera.cinematic_request("stun")
 #				cinematic_lock = [yaw, 30]
 #				cinematic = true
 #				camera.cinematic_request()
@@ -373,8 +373,8 @@ func set_fps_cam():
 	player = true
 	head = load("res://actors/fps_cam.tscn").instance()
 #	head.set_translation(get_node("headpos").get_translation())
-	head.get_node("base/arms").set_surface_material(0, skin)
-	head.get_node("base/arms/hand").set_surface_material(0, skin)
+#	head.get_node("base/arms").set_surface_material(0, skin)
+#	head.get_node("base/arms/hand").set_surface_material(0, skin)
 	get_node("body").hide()#I don't need to see my own "external" body
 	add_child(head)
 

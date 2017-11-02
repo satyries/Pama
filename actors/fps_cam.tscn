@@ -1,23 +1,7 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://actors/fps_cam.gd" type="Script" id=1]
 [ext_resource path="res://actors/camera_fx/stunt.tres" type="Environment" id=2]
-
-[sub_resource type="CylinderMesh" id=1]
-
-top_radius = 1.0
-bottom_radius = 1.0
-height = 2.0
-radial_segments = 64
-rings = 4
-
-[sub_resource type="SphereMesh" id=2]
-
-radius = 1.0
-height = 2.0
-radial_segments = 64
-rings = 32
-is_hemisphere = false
 
 [sub_resource type="Animation" id=3]
 
@@ -138,40 +122,6 @@ cast_to = Vector3( 0, -1, 0 )
 collision_layer = 1
 type_mask = 15
 _sections_unfolded = [ "Transform" ]
-
-[node name="arms" type="MeshInstance" parent="base"]
-
-transform = Transform( -0.0206204, 0.0379393, -0.00028672, 0, 0.000326332, 0.0431806, 0.0379405, 0.0206198, -0.000155831, 0.151737, -0.0810985, -0.160453 )
-visible = false
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 1 )
-skeleton = NodePath("..")
-material/0 = null
-
-[node name="hand" type="MeshInstance" parent="base/arms"]
-
-transform = Transform( -0.571101, -2.89491e-10, 1.0508, 1.05077, 0.00903804, 0.571084, -0.00794099, 1.19593, -0.00431588, 0.0926237, -1.5643, 0.22939 )
-visible = false
-layers = 1
-material_override = null
-cast_shadow = 1
-extra_cull_margin = 0.0
-use_in_baked_light = false
-lod_min_distance = 0.0
-lod_min_hysteresis = 0.0
-lod_max_distance = 0.0
-lod_max_hysteresis = 0.0
-mesh = SubResource( 2 )
-skeleton = NodePath("..")
-material/0 = null
 
 [node name="anim" type="AnimationPlayer" parent="."]
 

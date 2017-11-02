@@ -46,14 +46,17 @@ func reset_rotary():#currently not used
 	if !is_processing():
 		set_process(true)
 
-func cinematic_request():
+func cinematic_request(request):
 #	print("camera got the request")
+	if request == "stun":
+		camera.set_environment(fx_stunt)
 	player.cinematic = true
 
 
 
 func end_cinematic():
 	camera.set_rotation_deg(Vector3(0, 0, 0))
+	camera.set_environment(null)
 	rotary.set_rotation_deg(Vector3(0, 0, 0))
 	player.cinematic = false
 

@@ -2,6 +2,7 @@ extends Node
 
 #nodes
 var main #main node will place itself here
+var ms#node that takes care to update the serverlist
 var world #main node will place world container here
 var roster#
 var gui #main gui will place itself here
@@ -196,7 +197,8 @@ func get_world_spawnpoints():
 	for i in 5:
 		spawnpos[i] = Vector3(0,0,0)
 
-	var world_poslist = get_node("/root/main/world").get_child(0).get_node("pos")
+#	var world_poslist = get_node("/root/main/world").get_child(0).get_node("pos")
+	var world_poslist = activeworld.get_node("pos")
 	if world_poslist == null:
 		return spawnpos
 
@@ -232,6 +234,7 @@ func begin_game():
 
 	for p in players:#the "players" Dictionary contain *all other* players (not own self)
 		rpc_id(p, "pre_start_game", spawn_points)
+	gamestate.ms.unregister_server()#removing ourself from MasterServer
 	pre_start_game(spawn_points)
 
 remote func kill_everyone():

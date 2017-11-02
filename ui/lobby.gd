@@ -2,6 +2,14 @@ extends Control
 
 var colorlist
 
+var lobby_state = 0
+const idx_state = {
+			"idle"			:0,#no request, stop processing
+			"sa_update_ms"	:1,#satyr is updating the ms
+			"ny_get_list"	:2#nymph is getting the list
+			}
+var timeout = [0,10]
+
 
 func _enter_tree():
 	colorlist = get_node("intro/colors")
@@ -9,6 +17,25 @@ func _enter_tree():
 	get_node("intro").show()
 	get_node("players").hide()
 	get_node("connect").hide()
+
+
+func _process(delta):
+	if timeout[0] >= timeout[1]:
+		run_lobby_request()
+		timeout[0] = 0#reset timeout
+	else:
+		timeout[0] += 1*delta
+
+	if lobby_state == idx_state["idle"]:#time to put at sleep this process
+		timeout[0] = 0
+		set_process(false)
+
+func run_lobby_request():
+	if lobby_state == idx_state["sa_update_ms"]:
+		print("updating the satyr register")
+		var name = get_node("connect/name").text
+		var players = gamestate.get_player_list().size()
+		gamestate.ms.register_server(00,name,players)
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -20,7 +47,7 @@ func _ready():
 	colorlist.add_item("INTRO_COL_RED",1)
 	colorlist.add_item("INTRO_COL_BLUE",2)
 	colorlist.add_item("INTRO_COL_GREEN",3)
-
+	set_process(false)
 
 func _on_host_pressed():
 	if (get_node("connect/name").text == ""):
@@ -42,6 +69,8 @@ func _on_host_pressed():
 	var name = get_node("connect/name").text
 	gamestate.host_game(name)
 	get_node("players/satus").set_text("LOBBY_SA_IP")
+	set_process(true)
+	lobby_state = idx_state["sa_update_ms"]
 	refresh_lobby()
 
 
@@ -102,8 +131,11 @@ func refresh_lobby():
 		get_node("players/list").add_item(p)
 
 	get_node("players/start").disabled=not get_tree().is_network_server()
+	if get_tree().is_network_server() and players.size() >= 4:
+		_on_start_pressed()
 
 func _on_start_pressed():
+	lobby_state = idx_state["idle"]
 	gamestate.begin_game()
 
 
@@ -155,6 +187,7 @@ func set_my_color():
 
 
 func _on_back_pressed():
+	set_process(false)
 	get_node("connect/ip").set_text("127.0.0.1")
 	get_node("intro").show()
 	get_node("connect").hide()

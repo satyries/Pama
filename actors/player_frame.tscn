@@ -75,8 +75,8 @@ _sections_unfolded = [ "Transform" ]
 [node name="ray" type="RayCast" parent="."]
 
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.183911, 0 )
-enabled = false
-cast_to = Vector3( 0, -0.18, 0 )
+enabled = true
+cast_to = Vector3( 0, -0.2, 0 )
 collision_layer = 1
 type_mask = 15
 _sections_unfolded = [ "Transform" ]
