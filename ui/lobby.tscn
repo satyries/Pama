@@ -1,11 +1,75 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://ui/lobby.gd" type="Script" id=1]
 [ext_resource path="res://draft/iconsatyr.png" type="Texture" id=2]
 [ext_resource path="res://draft/iconnymph.png" type="Texture" id=3]
 [ext_resource path="res://font/droid_sans.tres" type="DynamicFont" id=4]
-[ext_resource path="res://ui/sprites/splash_img.png" type="Texture" id=5]
-[ext_resource path="res://draft/discord_invite.png" type="Texture" id=6]
+[ext_resource path="res://ui/lobby_nymph_select.gd" type="Script" id=5]
+[ext_resource path="res://draft/design-temp/nymph_menu.jpg" type="Texture" id=6]
+[ext_resource path="res://draft/ui/button_nymph.png" type="Texture" id=7]
+[ext_resource path="res://font/droid_sans_small.tres" type="DynamicFont" id=8]
+[ext_resource path="res://ui/sprites/gear.png" type="Texture" id=9]
+[ext_resource path="res://ui/sprites/splash_img.png" type="Texture" id=10]
+[ext_resource path="res://draft/discord_invite.png" type="Texture" id=11]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "extends Button
+var content = {}
+var tab
+const server_tab = 2
+
+func _enter_tree():
+	connect(\"pressed\",self, \"selected\")
+	connect(\"gui_input\", self, \"event_button\")
+	tab = gamestate.gui_lobby.ny_select.get_node(\"TabContainer\")
+#	content = Dictionary.new()
+
+func _ready():
+	if content.has(\"ip\"):
+		print(content[\"ip\"])
+	if content.has(\"name\"):
+		print(content[\"name\"])
+	print(content)
+	set_process(true)
+	
+
+func _process(delta):
+	pass
+
+
+func selected():
+	tab.set_current_tab(server_tab)
+	if content.has(\"name\"):
+		tab.get_node(\"Server/srv_name\").set_text(content[\"name\"])
+	if content.has(\"players\"):
+		tab.get_node(\"Server/srv_online_p\").set_text(content[\"players\"])
+#	tab.get_node(\"Server/ip\").set_text(content[\"ip\"])
+	tab.get_node(\"Server/custom/ip\").set_text(content[\"ip\"])
+	tab.get_node(\"Server/srv_switch\").set_pressed(false)
+	tab.get_node(\"Server/custom\").hide()
+#
+#func _on_sample_button_gui_input( ev ):
+#	print(\"vent\")
+#	if ev.is_class(\"InputEventMouseButton\"):
+#		print(\"not a button\")
+#	else:
+#		print(\"BUTTON\")
+
+func event_button(ev):
+	if !ev.is_class(\"InputEventMouseButton\"):
+		return
+	if ev.is_doubleclick():
+		selected()
+		gamestate.gui_lobby.ny_select._on_join_pressed()
+		
+		print(\"double click for: \" +str(get_name()))
+	
+
+func _on_sample_button_button_down():
+	print(\"button is down\")
+	pass # replace with function body
+"
 
 [node name="lobby" type="Control"]
 
@@ -13,43 +77,42 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 1026.0
+margin_bottom = 600.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="intro" type="Panel" parent="."]
 
 editor/display_folded = true
 visible = false
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 318.0
-margin_top = 85.0
-margin_right = 766.0
-margin_bottom = 568.0
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Margin" ]
 
 [node name="pick_satyr" type="Button" parent="intro"]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 261.0
-margin_top = 35.0
-margin_right = 401.0
-margin_bottom = 169.0
+anchor_left = 0.6
+anchor_top = 0.14
+anchor_right = 0.6
+anchor_bottom = 0.14
+margin_left = -0.599976
+margin_right = 139.4
+margin_bottom = 134.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -61,17 +124,17 @@ shortcut = null
 group = null
 icon = ExtResource( 2 )
 flat = false
+_sections_unfolded = [ "Anchor", "Margin" ]
 
 [node name="pick_nymph" type="Button" parent="intro"]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 38.0
-margin_top = 34.0
-margin_right = 178.0
-margin_bottom = 168.0
+anchor_left = 0.2
+anchor_top = 0.14
+anchor_right = 0.3
+anchor_bottom = 0.14
+margin_left = -0.199982
+margin_right = 37.2
+margin_bottom = 134.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -83,9 +146,11 @@ shortcut = null
 group = null
 icon = ExtResource( 3 )
 flat = false
+_sections_unfolded = [ "Anchor", "Margin" ]
 
 [node name="colors" type="OptionButton" parent="intro"]
 
+visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -112,14 +177,12 @@ _sections_unfolded = [ "custom_fonts" ]
 
 [node name="ny_info" type="Label" parent="intro"]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 14.0
-margin_top = 180.0
-margin_right = 213.0
-margin_bottom = 425.0
+anchor_left = 0.05
+anchor_top = 0.37
+anchor_right = 0.44
+anchor_bottom = 0.95
+margin_left = -0.299995
+margin_right = -0.440002
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
@@ -131,18 +194,14 @@ autowrap = true
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
-_sections_unfolded = [ "custom_fonts" ]
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
 
 [node name="sa_info" type="Label" parent="intro"]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 241.0
-margin_top = 181.0
-margin_right = 436.0
-margin_bottom = 426.0
+anchor_left = 0.5
+anchor_top = 0.37
+anchor_right = 0.95
+anchor_bottom = 0.95
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2
@@ -154,7 +213,7 @@ autowrap = true
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
-_sections_unfolded = [ "custom_fonts" ]
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
 
 [node name="players" type="Panel" parent="."]
 
@@ -172,6 +231,7 @@ rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+_sections_unfolded = [ "Anchor" ]
 
 [node name="awaiting" type="Label" parent="players"]
 
@@ -325,8 +385,500 @@ lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "custom_fonts" ]
 
+[node name="ny_select" type="Control" parent="."]
+
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 0
+grow_vertical = 0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+script = ExtResource( 5 )
+_sections_unfolded = [ "Anchor", "Grow Direction", "Margin", "Rect" ]
+
+[node name="Panel" type="Panel" parent="ny_select"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Margin" ]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="in_name" type="LineEdit" parent="ny_select"]
+
+anchor_left = 0.24
+anchor_top = 0.08
+anchor_right = 0.4
+anchor_bottom = 0.08
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+text = "default"
+max_length = 14
+expand_to_len = false
+focus_mode = 2
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+_sections_unfolded = [ "Anchor", "Margin", "Placeholder", "custom_fonts" ]
+
+[node name="nymph_menu" type="Sprite" parent="ny_select"]
+
+modulate = Color( 1, 1, 1, 0.430941 )
+position = Vector2( 281.308, 260.018 )
+scale = Vector2( 1.18608, 1.01023 )
+texture = ExtResource( 6 )
+_sections_unfolded = [ "Visibility" ]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="nymph_select" type="TextureButton" parent="ny_select"]
+
+anchor_left = 0.03
+anchor_top = 0.04
+anchor_right = 0.22
+anchor_bottom = 0.3
+margin_left = -0.6
+margin_top = -0.199999
+margin_right = -1.39999
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+texture_normal = ExtResource( 7 )
+expand = true
+stretch_mode = 5
+_sections_unfolded = [ "Anchor", "Margin" ]
+
+[node name="nymph_name" type="Label" parent="ny_select"]
+
+anchor_left = 0.24
+anchor_top = 0.04
+anchor_right = 0.45
+anchor_bottom = 0.08
+margin_left = -0.800003
+margin_top = -0.199999
+margin_right = -1.0
+margin_bottom = -0.399998
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 4 )
+text = "NY_SELECT_NAME"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="TabContainer" type="TabContainer" parent="ny_select"]
+
+anchor_left = 0.03
+anchor_top = 0.32
+anchor_right = 0.5
+anchor_bottom = 0.9
+margin_left = -0.6
+margin_top = -0.599991
+margin_right = -1.0
+margin_bottom = -1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+tab_align = 0
+tabs_visible = true
+_sections_unfolded = [ "Anchor", "Margin" ]
+
+[node name="Info" type="Tabs" parent="ny_select/TabContainer"]
+
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 37.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+hint_tooltip = "NYTAB_INFO"
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+_sections_unfolded = [ "Anchor", "Hint", "Margin", "custom_fonts" ]
+
+[node name="Skin" type="Tabs" parent="ny_select/TabContainer"]
+
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 37.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+hint_tooltip = "NYTAB_SKIN"
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+_sections_unfolded = [ "Hint", "custom_fonts" ]
+
+[node name="Server" type="Tabs" parent="ny_select/TabContainer"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 37.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+_sections_unfolded = [ "custom_fonts" ]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="join" type="Button" parent="ny_select/TabContainer/Server"]
+
+anchor_left = 0.55
+anchor_top = 0.4
+anchor_right = 0.95
+anchor_bottom = 0.4
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "NY_SELECT_CONNECT"
+flat = false
+clip_text = true
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="tag_name" type="Label" parent="ny_select/TabContainer/Server"]
+
+anchor_left = 0.05
+anchor_top = 0.1
+anchor_right = 0.4
+anchor_bottom = 0.1
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
+text = "NY_SELECT_SRVNAME"
+align = 2
+clip_text = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="tag_players" type="Label" parent="ny_select/TabContainer/Server"]
+
+anchor_left = 0.05
+anchor_top = 0.2
+anchor_right = 0.4
+anchor_bottom = 0.2
+margin_left = -0.85
+margin_top = -0.400002
+margin_right = -1.8
+margin_bottom = 12.6
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
+text = "NY_SELECT_PLAYERS"
+align = 2
+clip_text = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="srv_online_p" type="Label" parent="ny_select/TabContainer/Server"]
+
+anchor_left = 0.5
+anchor_top = 0.2
+anchor_right = 0.95
+anchor_bottom = 0.2
+margin_left = -0.5
+margin_top = -0.400002
+margin_right = -1.14999
+margin_bottom = 17.6
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
+text = "0"
+clip_text = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="srv_name" type="Label" parent="ny_select/TabContainer/Server"]
+
+anchor_left = 0.5
+anchor_top = 0.1
+anchor_right = 0.95
+anchor_bottom = 0.1
+margin_left = -0.5
+margin_top = -1.7
+margin_right = -1.14999
+margin_bottom = 17.3
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
+clip_text = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="srv_switch" type="Button" parent="ny_select/TabContainer/Server"]
+
+anchor_left = 0.4
+anchor_top = 0.37
+anchor_right = 0.4
+anchor_bottom = 0.4
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+group = null
+icon = ExtResource( 9 )
+flat = false
+_sections_unfolded = [ "Anchor", "Margin" ]
+
+[node name="custom" type="Control" parent="ny_select/TabContainer/Server"]
+
+editor/display_folded = true
+visible = false
+anchor_left = 0.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Margin" ]
+
+[node name="tag_custom_IP" type="Label" parent="ny_select/TabContainer/Server/custom"]
+
+anchor_left = 0.05
+anchor_top = 0.2
+anchor_right = 0.4
+anchor_bottom = 0.2
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
+text = "NY_SELECT_CUSTOM_IP"
+align = 2
+valign = 1
+clip_text = true
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="ip" type="LineEdit" parent="ny_select/TabContainer/Server/custom"]
+
+anchor_left = 0.5
+anchor_top = 0.2
+anchor_right = 0.8
+anchor_bottom = 0.2
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+text = "127.0.0.1"
+max_length = 15
+expand_to_len = false
+focus_mode = 2
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+_sections_unfolded = [ "Anchor", "Margin", "Placeholder", "custom_fonts" ]
+
+[node name="server_list" type="Container" parent="ny_select"]
+
+anchor_left = 0.52
+anchor_top = 0.04
+anchor_right = 0.97
+anchor_bottom = 0.9
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Anchor", "Margin" ]
+
+[node name="container" type="ScrollContainer" parent="ny_select/server_list"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 12.0
+margin_bottom = 12.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+scroll_horizontal = false
+scroll_vertical = true
+_sections_unfolded = [ "Anchor", "Scroll" ]
+
+[node name="listing_core" type="VBoxContainer" parent="ny_select/server_list/container"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 173.0
+margin_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 1
+size_flags_horizontal = 1
+size_flags_vertical = 1
+alignment = 1
+_sections_unfolded = [ "Anchor", "Grow Direction", "Margin" ]
+
+[node name="Button" type="Button" parent="ny_select/server_list/container/listing_core"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 173.0
+margin_bottom = 20.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 8 )
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "NY_SELECT_RETRIEVE_LIST"
+flat = true
+_sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
+
+[node name="sample_button" type="Button" parent="ny_select"]
+
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+margin_bottom = 25.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 4 )
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Text is here"
+flat = true
+script = SubResource( 1 )
+_sections_unfolded = [ "Anchor", "Grow Direction", "Margin", "Theme", "custom_fonts" ]
+
+[node name="alert" type="Label" parent="ny_select"]
+
+anchor_left = 0.05
+anchor_top = 0.91
+anchor_right = 0.95
+anchor_bottom = 0.99
+margin_left = -1.0
+margin_top = -1.0
+margin_right = -1.0
+margin_bottom = -1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 8 )
+text = "Test"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "Visibility", "custom_fonts" ]
+
 [node name="connect" type="Panel" parent="."]
 
+editor/display_folded = true
+visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -357,7 +909,7 @@ rect_clip_content = false
 mouse_filter = 1
 size_flags_horizontal = 1
 size_flags_vertical = 1
-texture = ExtResource( 5 )
+texture = ExtResource( 10 )
 stretch_mode = 0
 
 [node name="name_label" type="Label" parent="connect"]
@@ -411,7 +963,7 @@ anchor_bottom = 0.0
 margin_left = 139.0
 margin_top = 267.0
 margin_right = 287.0
-margin_bottom = 291.0
+margin_bottom = 296.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -568,7 +1120,7 @@ dialog_hide_on_ok = true
 visible = false
 anchor_left = 0.0
 anchor_top = 0.0
-anchor_right = 0.0
+anchor_right = 0.01
 anchor_bottom = 0.0
 margin_left = 850.0
 margin_top = 128.0
@@ -579,17 +1131,15 @@ rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+_sections_unfolded = [ "Anchor" ]
 
 [node name="discord_invite" type="TextureButton" parent="."]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 886.0
-margin_top = 21.0
-margin_right = 926.0
-margin_bottom = 61.0
+anchor_left = 0.85
+anchor_top = 0.03
+anchor_right = 0.98
+anchor_bottom = 0.03
+rect_min_size = Vector2( 64, 64 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -599,14 +1149,18 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 6 )
-_sections_unfolded = [ "Textures" ]
+texture_normal = ExtResource( 11 )
+expand = true
+stretch_mode = 5
+_sections_unfolded = [ "Anchor", "Grow Direction", "Margin", "Rect", "Textures" ]
 
 [connection signal="pressed" from="intro/pick_satyr" to="." method="_on_pick_satyr_pressed"]
 
 [connection signal="pressed" from="intro/pick_nymph" to="." method="_on_pick_nymph_pressed"]
 
 [connection signal="pressed" from="players/start" to="." method="_on_start_pressed"]
+
+[connection signal="pressed" from="ny_select/TabContainer/Server/join" to="ny_select" method="_on_join_pressed"]
 
 [connection signal="pressed" from="connect/host" to="." method="_on_host_pressed"]
 

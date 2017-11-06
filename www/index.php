@@ -27,10 +27,10 @@ if ($do == "register"){
 
 		for($i = 0; $i < count($db); ++$i) {
 			print("<br>doing...");
-//			if (($ut-$db[$i]["ut"]) > 1000 ) {//this one is too old
-//				print("too old");
-//				continue;
-//			}
+			if (($ut-$db[$i]["ut"]) > 1000 ) {//this one is too old
+				print("too old");
+				continue;
+			}
 			if ($ip == $db[$i]["ip"]){//this one it's me!
 				print("<br>".$ip." on ".$db[$i]["ip"]."<br>");
 
@@ -67,9 +67,9 @@ if ($do == "register"){
 }
 
 function db_load() {
-//	return file_get_contents("database.json");
-	print("giving the sample");
-	return file_get_contents("sample.json");
+	return file_get_contents("database.json");
+//	print("giving the sample");
+//	return file_get_contents("sample.json");
 } 
 
 function db_write($data) {

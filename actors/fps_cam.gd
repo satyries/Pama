@@ -28,7 +28,7 @@ var pending_processes = {}
 
 var pitch = 0.0
 const pitch_limit = 80
-const neck_bend = 0.1
+const neck_bend = 0.08
 var yaw = 0.0
 var origin = Vector3()
 
@@ -172,15 +172,19 @@ func update_game_camera():
 	base.set_rotation_deg(Vector3(0, yaw, 0))
 	player.yaw = yaw
 	camera.set_rotation_deg(Vector3(pitch, 0, 0))
-
 	var camerapos = camera.get_transform()
-	
+
 	#fixes for the eyeposition (which is a bone on the armature)
 	#1:armature is scaled: fix is *skeleton_ratio
 	#2:the model is rotated, but the armature ignore this, apply additional rotation "reflect(Vector3(0,1,0)"
 	var eye_position = skeleton.get_bone_global_pose(eye_bone).origin.reflect(Vector3(0,1,0))*skeleton_ratio
 	camerapos.origin = camerapos.origin.linear_interpolate(eye_position, 0.1)
-	camera.set_transform(camerapos)
+
+	
 	if pitch < 0:#simulating the neck bend when someone lock down
 #					eyes move slightly forward on y axis when you bend your head down
 		var neck_twist = (abs(pitch)/pitch_limit)*neck_bend
+		camerapos.origin.z = -neck_twist
+	else:
+		camerapos.origin.z = 0
+	camera.set_transform(camerapos)

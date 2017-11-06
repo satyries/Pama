@@ -8,7 +8,8 @@ var roster#
 var gui #main gui will place itself here
 var gui_lobby# gui lobby (child of gui) will place itself here
 var activeworld
-
+var active_tool = null
+var alert_fx
 
 #clients data
 var my_cd = {}#nymph_skin_id/satyr_skin_id/color/name
@@ -58,11 +59,31 @@ func respawn_request():
 		print("nymph here")
 
 func _enter_tree():
+	alert_fx = preload("res://ui/fx/alert.tscn")
 	set_process(true)
 
 func _process(delta):
 	time += delta
 
+remote func run_alert(type, msg, timeout = 10):
+	if get_tree().is_network_server():
+		var alert = alert_fx.instance()
+		alert.message = msg
+		alert.timeout = timeout
+		alert.end_condition = type
+		main.add_child(alert)
+		for i in players:
+			print("sending to: " +str(i))
+			rpc_id(i, "run_alert", type, msg, timeout)
+	else:
+		var alert = alert_fx.instance()
+		alert.message = msg
+		alert.timeout = timeout
+		alert.end_condition = type
+		main.add_child(alert)
+
+func reset_to_intro():
+	pass
 
 # Callback from SceneTree
 func _player_connected(id):
@@ -73,7 +94,10 @@ func _player_connected(id):
 # Callback from SceneTree
 func _player_disconnected(id):
 	if (get_tree().is_network_server()):
-		if (has_node("/root/world")): # Game is in progress
+		print("disconneision request for server")
+#		if (has_node("/root/world")): # Game is in progress
+		if roster.has_node(str(id)): # Game is in progress
+			print("which is an actual player in game")
 			emit_signal("game_error", "Player " + players[id] + " disconnected")
 			end_game()
 		else: # Game is not in progress
@@ -166,7 +190,9 @@ func nymph_captured(nymph):
 		print("captured is not the satry")
 	if roster.get_node(nymph_id) != null:
 		print("captured nymph acutally exist")
-	
+		
+	run_alert(2, "Nymph dominated by satyr", 4)
+
 #	is_captured(nymph.get_name())
 
 #	print("nymph \""+ str(nymph)+"\" was captured")
@@ -177,7 +203,8 @@ func nymph_captured(nymph):
 #						also to the one who's actually captured
 		rpc_id(p, "is_captured", nymph_id)
 	is_captured(nymph_id)
-
+	respawn()
+	
 func satyr_captured():
 	if !get_tree().is_network_server():
 		return
@@ -275,6 +302,7 @@ func respawn():#
 
 
 remote func pre_start_game(spawn_points):
+	gui_lobby.lobby_state = gui_lobby.idx_state["idle"]
 
 	#	TODO: load the request world map /root/main/world 
 	#	(map has to be chosed and paradigm must be set beofore)
@@ -365,7 +393,7 @@ func _ready():
 	update_external_ip(true)
 
 ##tools
-func update_external_ip(force):
+func update_external_ip(force):#satyr's ip detection: obsolte feature to remove
 	if (external_ip != null) and !force:#there's already a external ip, if there isn't a "forced request", just abot abort 
 		return
 

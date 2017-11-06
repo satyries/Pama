@@ -1,4 +1,16 @@
 ,"en","es","de","it","ja","ko"
+"SYS_WARN_TRANSLATION","Use [F4] to switch language anytime","Texto traducido automáticamente
+Translations are provided only for testing purpose
+press [F4] to roll back to english.
+","Maschinenübersetzter Text
+Translations are provided only for testing purpose
+press [F4] to roll back to english.","testo tradotto a macchina
+Translations are provided only for testing purpose
+press [F4] to roll back to english.","機械翻訳されたテキスト!
+Translations are provided only for testing purpose
+press [F4] to roll back to english.","기계 번역 된 텍스트
+Translations are provided only for testing purpose
+press [F4] to roll back to english."
 "KEY_HELLO","Hello!","Hola!","hellode","helloit","こんにちは","kelloko"
 "KEY_PUSH","Push Me!","Aprétame!","pusde","pusit","押す","pusko"
 "INTRO_COL_RED","Red","Rojo","Rot","Rosso","赤い","빨간"
@@ -23,3 +35,13 @@
 "LOBBY_SA_RET","attempt to retrieve…","intentar recuperar...","versuchst, die...","recuperando....","取得中...","검색하려고 시도 ..."
 "LOBBY_DESC_NY","Nymph desription","Desripción de ninfa","Nymphatische Beschreibung","Desrizione ninfa","ニュンペーの説明。","님프의 설명"
 "LOBBY_DESC_SA","Satyr Description","Descripción Satyr","Satyr Beschreibung","Descrizione Satyr","サテュロスの説明。","사티로스의 설명"
+"NY_SELECT_NAME","Nymph’s name","Nombre de la ninfa","Name der Nymphe","Nome ninfa:","ニンフの名前","님프 이름"
+"NY_SELECT_IN_NAME","Nymph","Ninfas","Nymphe","Ninfa","ニュンペー","님프"
+"NY_SELECT_SRVNAME","Satyr’s name","Nombre de sátiro","Satyrs Name","Nome satiro","サティールの名前","사티르의 이름"
+"NY_SELECT_PLAYERS","connected nymphs","ninfas conectadas","verbundene Nymphen","Ninfe connesse","接続されたニンフ","연결된 님프"
+"NY_SELECT_CUSTOM_IP","Custom IP",,,,,
+"NY_SELECT_CONNECT","Join","Unirse","Teilzunehmen","Unisciti","接続","참가하다"
+"NY_SELECT_RETRIEVE_LIST","Retrieving server list","recuperar lista de servidores","Serverliste abrufen","recupero della lista server","サーバリストの取得","서버 목록 검색 중"
+"NY_SELECT_ERROR_A","Select a valid server to connect first","Seleccione un servidor válido para conectarse primero","Wählen Sie einen gültigen Server für die erste Verbindung aus","Selezionare un server valido per connettersi prima","最初に接続する有効なサーバーを選択する","먼저 연결할 올바른 서버를 선택하십시오."
+"NYTAB_INFO","Info",,,,,
+"NYTAB_SKIN","Skins",,,,,

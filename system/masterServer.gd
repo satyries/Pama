@@ -8,11 +8,12 @@ const idx_srv = {
 
 
 
-signal server_registered()
-signal server_retrieved(servers)
+#signal server_registered()
+#signal server_retrieved(servers)
 
-const MS_URL = "http://localhost:8000/"
+#const MS_URL = "http://localhost:8000/"
 #const MS_URL = "http://pama.mygamesonline.org/ms/"
+const MS_URL = "http://pama.mygamesonline.org/online/"
 
 const TASK_NONE = 0
 const TASK_RETRIEVE = 1
@@ -20,8 +21,12 @@ const TASK_REGISTER = 2
 
 var currentTask = TASK_NONE
 
+var old_status
+
 func _enter_tree():
 	gamestate.ms = self
+
+
 
 func _ready():
 	set_use_threads(true)
@@ -41,12 +46,7 @@ func unregister_server():
 
 func retrieve_server():
 	currentTask = TASK_RETRIEVE
-	
 	cancel_request()
-	print(MS_URL+"index.php?do=lists")
-#	request(MS_URL+"?do=lists&search="+str(filter).percent_encode());
-#	print(MS_URL + "?do=list&search=" + str("").percent_encode())
-#	request(MS_URL+"index.php?do=lists")
 	request(MS_URL+"index.php?do=lists")
 
 
@@ -54,30 +54,36 @@ func failed_retrieve():
 	print("something went wrong while retrieving list")
 
 func on_request_completed(result, response_code, headers, body):
+	print("result is: " +str(result) + "\nbody size: "+str(get_body_size()))
 	if (result != HTTPRequest.RESULT_SUCCESS):
+		cancel_request()
 		return
 	
 
 	if (currentTask == TASK_RETRIEVE):
 		var string = parse_json(body.get_string_from_utf8())
-		for i in string:
-			print(i["ip"])
+		print(string)
+		if gamestate.active_tool != null:
+			gamestate.active_tool.update(string)
+#		for i in string:
+#			print(i["ip"])
 #			print("ip is: " +str(i))
 #			print("content is: " +str(string[i]))
 	
 	return
 
-	if (currentTask == TASK_RETRIEVE):
-		var string = parse_json(body.get_string_from_utf8())
-		var servers = []
-		for i in string:
-			if str(i[idx_srv["ip"]]).is_valid_ip_address():
-				var size = servers.size()
-				servers.resize(size+1)
-				servers[size] = i
-			else:
-				print("the other string is not valid")
-#		var sub_value = []
+#	if (currentTask == TASK_RETRIEVE):
+#		var string = parse_json(body.get_string_from_utf8())
+#		print(string)
+#		var servers = []
+#		for i in string:
+#			if str(i[idx_srv["ip"]]).is_valid_ip_address():
+#				var size = servers.size()
+#				servers.resize(size+1)
+#				servers[size] = i
+#			else:
+#				print("the other string is not valid")
+##		var sub_value = []
 #		for i in servers
 #		var sub_value = 
 
@@ -98,5 +104,5 @@ func on_request_completed(result, response_code, headers, body):
 #		print(servers["name"])
 #		emit_signal("server_retrieved", servers)
 	
-	if (currentTask == TASK_REGISTER):
-		emit_signal("server_registered")
+#	if (currentTask == TASK_REGISTER):
+#		emit_signal("server_registered")

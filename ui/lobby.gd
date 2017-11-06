@@ -10,6 +10,15 @@ const idx_state = {
 			}
 var timeout = [0,10]
 
+#nodes
+var ny_select#main screen after nymph selection
+var ny_srv_list#serverlist container for the nymph
+
+var sa_select#main screen after satyr selection
+
+
+
+
 
 func _enter_tree():
 	colorlist = get_node("intro/colors")
@@ -17,6 +26,23 @@ func _enter_tree():
 	get_node("intro").show()
 	get_node("players").hide()
 	get_node("connect").hide()
+	get_node("ny_select").hide()
+	get_viewport().connect("size_changed", self, "resize_window")
+
+
+	ny_select = get_node("ny_select")
+	ny_srv_list = get_node("ny_select/server_list/container/listing_core")
+
+
+
+
+func resize_window():
+	var size =get_viewport().size
+	set_global_position(Vector2(0,0))
+	rect_size = size
+
+
+
 
 
 func _process(delta):
@@ -131,11 +157,14 @@ func refresh_lobby():
 		get_node("players/list").add_item(p)
 
 	get_node("players/start").disabled=not get_tree().is_network_server()
+#	if get_tree().is_network_server() and players.size() >= 4:
 	if get_tree().is_network_server() and players.size() >= 4:
-		_on_start_pressed()
+#		_on_start_pressed()
+		gamestate.begin_game()
+
 
 func _on_start_pressed():
-	lobby_state = idx_state["idle"]
+#	lobby_state = idx_state["idle"]
 	gamestate.begin_game()
 
 
@@ -160,19 +189,37 @@ func _on_pick_satyr_pressed():
 	set_my_color()
 	
 
-func _on_pick_nymph_pressed():
-	get_node("connect/ip").set_text("127.0.0.1")
-	get_node("connect/ip").show()
+#func _on_pick_nymph_pressed():
+#	get_node("connect/ip").set_text("127.0.0.1")
+#	get_node("connect/ip").show()
+#
+#	if !gamestate.my_cd.has("nymph_skin"):
+#		gamestate.my_cd = {"nymph_skin":"default"}
+#	get_node("connect/ip_label").show()
+#	get_node("connect/join").show()
+#	get_node("connect/host").hide()
+#	get_node("intro").hide()
+#	get_node("connect").show()
+#	get_node("connect/error_label").set_text("CON_DESC_SA")
+#	set_my_color()
 
+func _on_pick_nymph_pressed():
 	if !gamestate.my_cd.has("nymph_skin"):
 		gamestate.my_cd = {"nymph_skin":"default"}
-	get_node("connect/ip_label").show()
-	get_node("connect/join").show()
+	get_node("connect/ip").set_text("127.0.0.1")
+	get_node("connect/ip").show()
 	get_node("connect/host").hide()
 	get_node("intro").hide()
-	get_node("connect").show()
-	get_node("connect/error_label").set_text("CON_DESC_SA")
-	set_my_color()
+	get_node("ny_select").show()
+	gamestate.main.activate_tool(self,"nymph_server_request")
+#	if !gamestate.my_cd.has("nymph_skin"):
+#		gamestate.my_cd = {"nymph_skin":"default"}
+#	get_node("connect/ip_label").show()
+#	get_node("connect/join").show()
+#	get_node("connect").show()
+#	get_node("connect/error_label").set_text("CON_DESC_SA")
+#	set_my_color()
+
 
 func set_my_color():
 	var pickt = colorlist.get_selected_id()

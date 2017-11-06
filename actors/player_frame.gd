@@ -194,8 +194,8 @@ func _enter_tree():
 		set_meta("nymph", 0)
 #	set_fixed_process(true)#was renamed 1st october
 	set_translation(position)
-	skin = SpatialMaterial.new()
-	skin.set_albedo(my_cd["color"])
+#	skin = SpatialMaterial.new()
+#	skin.set_albedo(my_cd["color"])
 	if get_name() == str(get_tree().get_network_unique_id()):#hey,that's me!
 		human_control = true
 		set_fps_cam()
@@ -271,11 +271,12 @@ func dummy_switch(from, to, strafe):
 func dummy_process(delta):
 	if my_class == "satyr":
 		if status == idx_stat["stunned"]:
-			skin = SpatialMaterial.new()
-			skin.set_albedo(Color(randf(),randf(),randf(),1))
-			get_node("body/mesh").set_surface_material(0, skin)
-			get_node("body/head").set_surface_material(0, skin)
-			get_node("body/head2").set_surface_material(0, skin)
+			pass
+#			skin = SpatialMaterial.new()
+#			skin.set_albedo(Color(randf(),randf(),randf(),1))
+#			get_node("body/mesh").set_surface_material(0, skin)
+#			get_node("body/head").set_surface_material(0, skin)
+#			get_node("body/head2").set_surface_material(0, skin)
 	else:
 		pass
 		

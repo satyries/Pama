@@ -11,9 +11,52 @@ var models = {"nymph_base":"res://sources/characters/nymph.tscn", "satyr_base":"
 var skin_nymph = {"default":"res://sources/characters/nymph.tscn", "nymph_extra":"res://noneyet"}
 var skin_satyr = {"default":"res://sources/characters/satyr.tscn", "satyr_extra":"res://noneyet"}
 
+#tools
+var ms_updater
+#var active_tool = null
+
+func activate_tool(where=null,what=null):
+#The tool is added as child to the node who need be updated
+#The tool contact the masterservernode (MSn) node with the request the parent need
+#MSn gives the result (server list) to the tool
+#The tool, child of node who need update, set its parent as per its given task
+	if where == null:
+		return
+	if gamestate.active_tool != null:#there can be only one tool active: cleanup
+		gamestate.ms.cancel_request()
+		gamestate.ms.currentTask = gamestate.ms.TASK_NONE
+		gamestate.active_tool.die()
+
+	if what == "nymph_server_request":#request come from /lobby/ny_select
+		gamestate.active_tool = ms_updater.instance()
+		gamestate.active_tool.employer = where#we know it's /lobby/ny_select, but its safer if the node itself told us
+		gamestate.active_tool.task = gamestate.active_tool.idx_task["nymph_request"]
+		where.add_child(gamestate.active_tool)
+	elif what == "main_debug":
+		gamestate.active_tool = ms_updater.instance()
+		gamestate.active_tool.employer = self
+		gamestate.active_tool.task = gamestate.active_tool.idx_task["satyr_register"]
+		where.add_child(gamestate.active_tool)
+
+
+
+func _ready():
+	if public and !OS.get_locale().begins_with("en"):
+		print("not english")
+		gamestate.run_alert(1, "SYS_WARN_TRANSLATION")
+
+
+
 func _enter_tree():
-#	Engine.set_target_fps(18)
-	TranslationServer.set_locale("en")
+
+	var lang = OS.get_locale()
+	for i in locales:
+		if lang.begins_with(i):
+			TranslationServer.set_locale(i)
+
+	ms_updater = preload("res://system/tools/MS_updater.tscn")
+	
+#	TranslationServer.set_locale("en")
 	randomize()
 	get_node("gui").add_child(load("res://ui/lobby.tscn").instance())
 	gamestate.main = self
@@ -22,6 +65,8 @@ func _enter_tree():
 	gamestate.roster = get_node("world/roster")
 
 	if public:
+		Engine.set_target_fps(18)
+
 		gamestate.activeworld = load("res://draft/temptst/publicmap.tscn").instance()
 	else:
 		gamestate.activeworld = load("res://draft/map.tscn").instance()
@@ -63,7 +108,9 @@ func _input(ie):
 			get_node("masterServer").retrieve_server()
 			print("debug")
 		if (ie.scancode == KEY_F7):
-			print("debug")
+			activate_tool(self,"main_debug")
+		if (ie.scancode == KEY_F9):
+			gamestate.run_alert(2, "fuckyou")
 
 
 
@@ -80,10 +127,3 @@ func switch_locale():
 	for i in range(locales.size()):
 		if locale == locales[i]:
 			TranslationServer.set_locale(locales[i+1])
-#			return
-#	TranslationServer.set_locale("en")
-#	print(locales.back())
-#	var size =locales.size()
-#	set_locale(value)Getter: get_locale()
-#	for i in locales:
-#		print(locales[i])
