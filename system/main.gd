@@ -15,6 +15,11 @@ var skin_satyr = {"default":"res://sources/characters/satyr.tscn", "satyr_extra"
 var ms_updater
 #var active_tool = null
 
+
+func hardfix_bugs():#small annoying issues fixed
+	get_node("world/sun").set_rotation_deg(Vector3(-35.5,179.4,30))#weird problem Godot have, probably fixed in future
+	
+
 func activate_tool(where=null,what=null):
 #The tool is added as child to the node who need be updated
 #The tool contact the masterservernode (MSn) node with the request the parent need
@@ -41,6 +46,8 @@ func activate_tool(where=null,what=null):
 
 
 func _ready():
+	hardfix_bugs()#hopefully we'll remove this
+	return
 	if public and !OS.get_locale().begins_with("en"):
 		print("not english")
 		gamestate.run_alert(1, "SYS_WARN_TRANSLATION")
@@ -48,12 +55,12 @@ func _ready():
 
 
 func _enter_tree():
-
-	var lang = OS.get_locale()
-	for i in locales:
-		if lang.begins_with(i):
-			TranslationServer.set_locale(i)
-
+#	Engine.set_target_fps(13)
+#	var lang = OS.get_locale()
+#	for i in locales:
+#		if lang.begins_with(i):
+#			TranslationServer.set_locale(i)
+	TranslationServer.set_locale("en")
 	ms_updater = preload("res://system/tools/MS_updater.tscn")
 	
 #	TranslationServer.set_locale("en")
@@ -65,11 +72,12 @@ func _enter_tree():
 	gamestate.roster = get_node("world/roster")
 
 	if public:
-		Engine.set_target_fps(18)
 
 		gamestate.activeworld = load("res://draft/temptst/publicmap.tscn").instance()
 	else:
-		gamestate.activeworld = load("res://draft/map.tscn").instance()
+#		Engine.set_target_fps(13)
+		gamestate.activeworld = load("res://draft/temptst/publicmap.tscn").instance()
+#		gamestate.activeworld = load("res://draft/map.tscn").instance()
 	gamestate.world.add_child(gamestate.activeworld)
 #	gamestate.activeworld = get_node("world").get_child(0)
 
@@ -110,8 +118,13 @@ func _input(ie):
 		if (ie.scancode == KEY_F7):
 			activate_tool(self,"main_debug")
 		if (ie.scancode == KEY_F9):
-			gamestate.run_alert(2, "fuckyou")
-
+			if get_tree().is_network_server():
+				var p = gamestate.roster.get_node("1")
+				p.set_status("stunned", "")
+				p.anim_head("stunned")
+				p.anim_body("crash")
+				p.camera.cinematic_request("stun")
+			
 
 
 

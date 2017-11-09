@@ -35,7 +35,7 @@ func _enter_tree():
 func _process(delta):
 	if status == 1:#initiate show message
 		character_count = alert_message.get_total_character_count()
-		print("character count is: " +str(character_count))
+#		print("character count is: " +str(character_count))
 		alert_message.show()
 		status = 2
 		return

@@ -52,7 +52,7 @@ var charge_collide = false#detect if the satyr is colliding against something (t
 var cinematic = false#while this status is in effect, all features related to normal gameplay are disabled
 var cinematic_lock = [10,20]
 
-var stun_delay = [0, 5]
+var stun_delay = [0, 8]
 sync var status = 0
 const idx_stat = {	
 				"idle"		:0,#satyr/nymph
@@ -90,6 +90,7 @@ onready var body		= get_node("body")
 onready var raycast		= get_node("ray")
 onready var chargeray_l	= get_node("body/chargeray_l")
 onready var chargeray_r	= get_node("body/chargeray_r")
+onready var ny_catch_ray= get_node("body/satyr_catch")
 
 var camera
 var hv = Vector3()
@@ -209,9 +210,9 @@ func _enter_tree():
 		else:
 			set_nymph_remote()
 
-	get_node("body/mesh").set_surface_material(0, skin)
-	get_node("body/head").set_surface_material(0, skin)
-	get_node("body/head2").set_surface_material(0, skin)
+#	get_node("body/mesh").set_surface_material(0, skin)
+#	get_node("body/head").set_surface_material(0, skin)
+#	get_node("body/head2").set_surface_material(0, skin)
 	
 	set_process(true);
 	set_physics_process(true)
@@ -268,6 +269,13 @@ func dummy_switch(from, to, strafe):
 			pass
 #	print("dummy switched from: " +str(from) + " to " + str(to))
 
+func check_nymphray():
+	return ny_catch_ray.get_collider()
+
+
+func dummy_nymph_hit_player(who):
+	print(who.get_name())
+
 func dummy_process(delta):
 	if my_class == "satyr":
 		if status == idx_stat["stunned"]:
@@ -278,8 +286,12 @@ func dummy_process(delta):
 #			get_node("body/head").set_surface_material(0, skin)
 #			get_node("body/head2").set_surface_material(0, skin)
 	else:
-		pass
-		
+		if get_tree().is_network_server():#dummy nymph on server (actual nymph player client doesn't use this code)
+			if ny_catch_ray.is_colliding():
+				var ny_catch_stat = ny_catch_ray.get_collider()
+				if ny_catch_stat.status != null:
+					if ny_catch_stat.status == idx_stat["stunned"]:
+						gamestate.satyr_captured(self)
 	if old_status != status:
 #		print("status changed for dummy")
 		pass
@@ -388,7 +400,11 @@ func _ready():
 	if satyr:
 		chargeray_l.set_enabled(true)
 		chargeray_r.set_enabled(true)
-
+		chargeray_l.add_exception(self)
+		chargeray_r.add_exception(self)
+	else:
+		ny_catch_ray.set_enabled(true)
+		ny_catch_ray.add_exception(self)
 func _physics_process(delta):
 	if is_network_master():
 		var cam_trans = camera.camera.get_global_transform();
@@ -472,21 +488,18 @@ func satyr_if(state):#inegrate forces for satyr
 		dir = dir.normalized()
 		rset_unreliable("dir", dir);
 
-#		if (request_status == "walking") and !is_moving():
-#			request_status = "idle"
 	
 	if (get_tree().is_network_server()):
 		if (typeof(dir) != TYPE_VECTOR3):
 			dir = Vector3();
 		dir = dir.normalized();
 		dir *= SPEED[0];
-	
 		hv = hv.linear_interpolate(dir, 10*delta);
 		lv.x = hv.x;
 		lv.z = hv.z;
 		set_linear_velocity(lv);
 		rset_unreliable("l_velocity", lv);
-#		print("request is: " + str(request_status))
+
 	if request_status == null:
 		return
 	if status != idx_stat[str(request_status)]:
@@ -532,17 +545,23 @@ func nymph_if(state):#integrate forces for nymph
 		dir = dir.normalized()
 		rset_unreliable("dir", dir);
 
-	if (get_tree().is_network_server()):
+	if (get_tree().is_network_server()):#dummy nymph on server
 		if (typeof(dir) != TYPE_VECTOR3):
-			dir = Vector3();
-		dir = dir.normalized();
-		dir *= SPEED[0];
+			dir = Vector3()
+		dir = dir.normalized()
+		dir *= SPEED[0]
 	
-		hv = hv.linear_interpolate(dir, 10*delta);
-		lv.x = hv.x;
-		lv.z = hv.z;
-		set_linear_velocity(lv);
-		rset_unreliable("l_velocity", lv);
+		hv = hv.linear_interpolate(dir, 10*delta)
+		lv.x = hv.x
+		lv.z = hv.z
+		set_linear_velocity(lv)
+#		var touching_ny = get_colliding_bodies()
+#		if touching_ny != null:
+#			print("something is touchy-touchy the nymph")
+			
+
+
+		rset_unreliable("l_velocity", lv)
 
 
 

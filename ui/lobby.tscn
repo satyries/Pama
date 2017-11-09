@@ -217,6 +217,7 @@ _sections_unfolded = [ "Anchor", "Margin", "custom_fonts" ]
 
 [node name="players" type="Panel" parent="."]
 
+editor/display_folded = true
 visible = false
 anchor_left = 0.0
 anchor_top = 0.0
@@ -516,7 +517,6 @@ _sections_unfolded = [ "Anchor", "Margin" ]
 
 [node name="Info" type="Tabs" parent="ny_select/TabContainer"]
 
-visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
@@ -706,7 +706,6 @@ _sections_unfolded = [ "Anchor", "Margin" ]
 
 [node name="custom" type="Control" parent="ny_select/TabContainer/Server"]
 
-editor/display_folded = true
 visible = false
 anchor_left = 0.0
 anchor_top = 0.5
@@ -746,13 +745,16 @@ anchor_left = 0.5
 anchor_top = 0.2
 anchor_right = 0.8
 anchor_bottom = 0.2
+margin_left = -0.5
+margin_top = -0.6
+margin_right = -0.600006
+margin_bottom = 28.4
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_fonts/font = ExtResource( 4 )
-text = "127.0.0.1"
 max_length = 15
 expand_to_len = false
 focus_mode = 2
@@ -796,8 +798,8 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 173.0
-margin_bottom = 20.0
+margin_right = 143.0
+margin_bottom = 19.0
 grow_horizontal = 0
 grow_vertical = 0
 rect_pivot_offset = Vector2( 0, 0 )
@@ -814,8 +816,8 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 173.0
-margin_bottom = 20.0
+margin_right = 143.0
+margin_bottom = 19.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0

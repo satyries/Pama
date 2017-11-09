@@ -25,7 +25,7 @@ func _process(delta):
 
 func is_not_end(delta):
 	if end_condition == 1:
-		print("processing problem")
+#		print("processing problem")
 		if TranslationServer.get_locale() == "en":
 			var msg = TranslationServer.translate("SYS_WARN_TRANSLATION")
 			get_node("message").text = msg

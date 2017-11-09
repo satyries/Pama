@@ -16,6 +16,7 @@ size_flags_vertical = 1
 
 [node name="name" type="Label" parent="."]
 
+visible = false
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0

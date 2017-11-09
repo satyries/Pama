@@ -50,13 +50,14 @@ var ip_tool = load("res://system/ipdetect.tscn")
 var echo_ip
 
 
-func respawn_request():
-	if !ingame:
-		return
-	if is_network_master():
-		pass
-	else:
-		print("nymph here")
+#func respawn_request():#not used
+#	if !ingame:
+#		return
+#	if is_network_master():
+#		pass
+#	else:
+#		pass
+#		print("nymph here")
 
 func _enter_tree():
 	alert_fx = preload("res://ui/fx/alert.tscn")
@@ -65,22 +66,30 @@ func _enter_tree():
 func _process(delta):
 	time += delta
 
-remote func run_alert(type, msg, timeout = 10):
+
+
+
+remote func run_local_alert(type, msg, timeout = 10):
+		var alert = alert_fx.instance()
+		alert.message = msg
+		alert.timeout = timeout
+		alert.end_condition = type
+		main.add_child(alert)
+
+
+
+func run_sys_alert(type, msg, timeout = 10):
 	if get_tree().is_network_server():
-		var alert = alert_fx.instance()
-		alert.message = msg
-		alert.timeout = timeout
-		alert.end_condition = type
-		main.add_child(alert)
+#		var alert = alert_fx.instance()
+#		alert.message = msg
+#		alert.timeout = timeout
+#		alert.end_condition = type
+#		main.add_child(alert)
 		for i in players:
-			print("sending to: " +str(i))
-			rpc_id(i, "run_alert", type, msg, timeout)
-	else:
-		var alert = alert_fx.instance()
-		alert.message = msg
-		alert.timeout = timeout
-		alert.end_condition = type
-		main.add_child(alert)
+#			print("sending to: " +str(i))
+			rpc_id(i, "run_local_alert", type, msg, timeout)
+		run_local_alert(type, msg, timeout)
+
 
 func reset_to_intro():
 	pass
@@ -94,10 +103,10 @@ func _player_connected(id):
 # Callback from SceneTree
 func _player_disconnected(id):
 	if (get_tree().is_network_server()):
-		print("disconneision request for server")
+#		print("disconneision request for server")
 #		if (has_node("/root/world")): # Game is in progress
 		if roster.has_node(str(id)): # Game is in progress
-			print("which is an actual player in game")
+#			print("which is an actual player in game")
 			emit_signal("game_error", "Player " + players[id] + " disconnected")
 			end_game()
 		else: # Game is not in progress
@@ -184,39 +193,45 @@ func get_player_name():
 func nymph_captured(nymph):
 	if !get_tree().is_network_server():
 		return
-	#check if is a nymph that actually exist
-	var nymph_id = nymph.get_name()
-	if nymph_id != "1":
-		print("captured is not the satry")
-	if roster.get_node(nymph_id) != null:
-		print("captured nymph acutally exist")
-		
-	run_alert(2, "Nymph dominated by satyr", 4)
 
-#	is_captured(nymph.get_name())
-
-#	print("nymph \""+ str(nymph)+"\" was captured")
-#	print("her name is: " +str(nymph_id))
-#	print("captured nymph and satyr are lock in cinematic mode")
-#	print("show other player")
 	for p in players:#telling nymphs one of them is captured
 #						also to the one who's actually captured
-		rpc_id(p, "is_captured", nymph_id)
-	is_captured(nymph_id)
+		rpc_id(p, "report_captured_nymph", nymph.get_name())
+	report_captured_nymph(nymph.get_name())
 	respawn()
 	
-func satyr_captured():
+func satyr_captured(nymph):
 	if !get_tree().is_network_server():
 		return
-	print("the satyr is caputred")
-	print("telling all other players")
-	print("captured satyr and winning nymph are lock in cinematic mode")
+	print("satyr captured")
 
-remote func is_captured(who):
-	print("captured player...")
-	if who == str(get_tree().get_network_unique_id()):
-		print("that's me")
-	pass
+	for p in players:#telling nymphs one of them is captured
+#						also to the one who's actually captured
+		rpc_id(p, "report_captured_satyr", nymph.get_name())
+	report_captured_satyr(nymph.get_name())
+	respawn()
+
+
+remote func report_captured_nymph(nymph):
+	if get_tree().is_network_server():
+		run_local_alert(2, "You turned a nymph into your precious sexual doll", 4)
+		return
+	var my_id = str(get_tree().get_network_unique_id())
+	if nymph == my_id:
+		run_local_alert(2, "The satyr dominated you", 4)
+	else:
+		run_local_alert(2, "One of your friends is taking lewd lesson from satyr", 4)
+
+
+remote func report_captured_satyr(nymph):
+	if get_tree().is_network_server():
+		run_local_alert(2, "A nymph turned you into her plaything", 4)
+		return
+	var my_id = str(get_tree().get_network_unique_id())
+	if nymph == my_id:
+		run_local_alert(2, "Turned the savage satyr stallion into your tamed ride", 4)
+	else:
+		run_local_alert(2, "One of your friend claimed the satyr for herself", 4)
 
 func get_world_spawnpoints():
 	#reset spawnpos
@@ -237,7 +252,7 @@ func get_world_spawnpoints():
 	if world_poslist.has_node("master"):#master spawnpoint belong to master
 		spawnpos[0] = world_poslist.get_node("master").get_translation()
 		pos_idx = 1#1st spawnpoint is taken by master
-		print("master spawn is at: " +str(world_poslist.get_node("master").get_translation()))
+#		print("master spawn is at: " +str(world_poslist.get_node("master").get_translation()))
 	for i in 5:
 		var trsn_node = world_poslist.get_child(i)
 		if (trsn_node.get_name() != "master") or (trsn_node == null):
@@ -245,7 +260,7 @@ func get_world_spawnpoints():
 			#we ignore this cycle
 			spawnpos[pos_idx] = trsn_node.get_translation()
 			pos_idx+=1
-	print(spawnpos)
+#	print(spawnpos)
 	return spawnpos
 
 func begin_game():
