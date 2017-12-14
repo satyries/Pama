@@ -3,8 +3,11 @@
 importer="csv_translation"
 type="Translation"
 
-[gen]
+[deps]
+
 files=[ "res://system/messages/text.en.translation", "res://system/messages/text.es.translation", "res://system/messages/text.de.translation", "res://system/messages/text.it.translation", "res://system/messages/text.ja.translation", "res://system/messages/text.ko.translation" ]
+
+source_md5="e05fe7af4a798a4c33e72d01d8a9c796"
 
 [params]
 

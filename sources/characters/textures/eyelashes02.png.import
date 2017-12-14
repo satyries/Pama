@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/eyelashes02.png-87373eff6ed44957955a4a540ca3a917.stex"
 
+[deps]
+
+source_md5="0ae730f660658e0fa972d61491fe8f91"
+
 [params]
 
 compress/mode=0

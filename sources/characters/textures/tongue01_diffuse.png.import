@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/tongue01_diffuse.png-9682794c0f7a14df9f88c3bae4d9e8f1.stex"
 
+[deps]
+
+source_md5="3e3ae7b23f20344f531dfafa763f5853"
+
 [params]
 
 compress/mode=0

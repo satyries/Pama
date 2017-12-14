@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/brown_eye.png-96b687a221c422cbeab3aa966f27006c.stex"
 
+[deps]
+
+source_md5="36da78f5e78249c15725561542be81a4"
+
 [params]
 
 compress/mode=0

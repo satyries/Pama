@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/grass_ground_d.jpg-ca275e22fa6109705a7980c65df57337.stex"
 
+[deps]
+
+source_md5="c050d6a0101011328ddf46ea1288d55b"
+
 [params]
 
 compress/mode=0

@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/ice_eye.png-a088a01a80742970f24434d3fed915c8.stex"
 
+[deps]
+
+source_md5="b302769365b2d9ba56aaa3230c6d4814"
+
 [params]
 
 compress/mode=0

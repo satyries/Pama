@@ -17,7 +17,7 @@ var ms_updater
 
 
 func hardfix_bugs():#small annoying issues fixed
-	get_node("world/sun").set_rotation_deg(Vector3(-35.5,179.4,30))#weird problem Godot have, probably fixed in future
+	get_node("world/sun").set_rotation_degrees(Vector3(-35.5,179.4,30))#weird problem Godot have, probably fixed in future
 	
 
 func activate_tool(where=null,what=null):

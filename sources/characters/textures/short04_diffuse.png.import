@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/short04_diffuse.png-3f49b10f0c2b6e7583da53e2155181e4.stex"
 
+[deps]
+
+source_md5="8539f645e2187ac7491665c1567df5dc"
+
 [params]
 
 compress/mode=0

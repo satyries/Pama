@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/young_lightskinned_female_diffuse3.png-70e9971b1059bebc9fb8f655c8de5058.stex"
 
+[deps]
+
+source_md5="df009f0dd7dc31bccf1b9e5cf1ace580"
+
 [params]
 
 compress/mode=0

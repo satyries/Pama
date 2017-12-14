@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/discord_invite.png-4d226d5ed0414fd4a399f35c3da5e56f.stex"
 
+[deps]
+
+source_md5="dd43d6ab3e172e0004a7617ba9c8a45c"
+
 [params]
 
 compress/mode=0

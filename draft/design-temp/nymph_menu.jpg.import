@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/nymph_menu.jpg-1ce4030a7ecdcd4669c298150ddf9f74.stex"
 
+[deps]
+
+source_md5="95f58b3c04a5ba341400c4b8e8e1a5d5"
+
 [params]
 
 compress/mode=0

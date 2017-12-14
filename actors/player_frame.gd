@@ -157,7 +157,7 @@ func set_satyr_remote():#set skin, clothes and for the satyr dummy (players we s
 	if !skin_db.has(model):
 		model = "default"
 	model = load(skin_db[model]).instance()
-	model.set_rotation_deg(Vector3(0,180,0))
+	model.set_rotation_degrees(Vector3(0,180,0))
 	get_node("body").add_child(model)
 	body_animation = model.get_node("AnimationPlayer")
 
@@ -172,7 +172,7 @@ func set_nymph_remote():#set skin, clothes and for the nymph dummy (players we s
 	if !skin_db.has(model):
 		model = "default"
 	model = load(skin_db[model]).instance()
-	model.set_rotation_deg(Vector3(0,180,0))
+	model.set_rotation_degrees(Vector3(0,180,0))
 	get_node("body").add_child(model)
 	body_animation = model.get_node("AnimationPlayer")
 

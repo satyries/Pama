@@ -4,6 +4,10 @@ importer="scene"
 type="PackedScene"
 path="res://.import/publicmap.dae-8eec7eed7a5dad039894e9a1dfb1e75e.scn"
 
+[deps]
+
+source_md5="82d4095782ca534bcde84d80051f68e5"
+
 [params]
 
 nodes/root_type="Spatial"
@@ -16,11 +20,14 @@ materials/keep_on_reimport=false
 meshes/compress=true
 meshes/ensure_tangents=true
 meshes/storage=0
+meshes/light_baking=0
+meshes/lightmap_texel_size=0.05
 external_files/store_in_subdir=false
 animation/import=true
 animation/fps=15
 animation/filter_script=""
 animation/storage=false
+animation/keep_custom_tracks=false
 animation/optimizer/enabled=true
 animation/optimizer/max_linear_error=0.05
 animation/optimizer/max_angular_error=0.01

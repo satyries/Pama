@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/teeth.png-1604298f771cc7ebf64904428cc1cf43.stex"
 
+[deps]
+
+source_md5="cfa2d0bd9e6cf463738f8f79951b2cfa"
+
 [params]
 
 compress/mode=0

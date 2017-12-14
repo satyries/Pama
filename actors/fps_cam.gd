@@ -55,9 +55,9 @@ func cinematic_request(request):
 
 
 func end_cinematic():
-	camera.set_rotation_deg(Vector3(0, 0, 0))
+	camera.set_rotation_degrees(Vector3(0, 0, 0))
 	camera.set_environment(null)
-	rotary.set_rotation_deg(Vector3(0, 0, 0))
+	rotary.set_rotation_degrees(Vector3(0, 0, 0))
 	player.cinematic = false
 
 func _process(delta):
@@ -75,14 +75,14 @@ func _process(delta):
 	if rset_rotary_switch:
 
 		var straight = Vector3(0,0,0)
-		var rota_deg = rotary.get_rotation_deg()
+		var rota_deg = rotary.get_rotation_degrees()
 		
 		if rota_deg.distance_to(straight) > 0.01:#riduci
 			rota_deg = rota_deg.linear_interpolate(straight, 0.1)
-			rotary.set_rotation_deg(rota_deg) 
+			rotary.set_rotation_degrees(rota_deg) 
 		else:
 			camera.set_environment(null)
-			rotary.set_rotation_deg(straight)
+			rotary.set_rotation_degrees(straight)
 			rset_rotary_switch = false
 #			if pending_processes.has("reset_rotary"):
 #				pending_processes.erase("reset_rotary")
@@ -102,8 +102,8 @@ func _ready():
 	if (typeof(raycast) == TYPE_NODE_PATH):
 		raycast = get_node(raycast)
 	raycast.add_exception(player)
-	pitch = camera.get_rotation_deg().x
-	yaw = base.get_rotation_deg().y
+	pitch = camera.get_rotation_degrees().x
+	yaw = base.get_rotation_degrees().y
 	camera.make_current()
 	set_process(true)
 	set_process_input(true)
@@ -148,8 +148,8 @@ func _input(ie):
 			update_game_camera()
 
 func update_cine_camera(req_yaw,req_pitch):
-	var rot_yaw = rotary.get_rotation_deg().y-req_yaw
-	var rot_pitch = camera.get_rotation_deg().x-req_pitch
+	var rot_yaw = rotary.get_rotation_degrees().y-req_yaw
+	var rot_pitch = camera.get_rotation_degrees().x-req_pitch
 	rot_yaw = clamp(rot_yaw, -player.cinematic_lock[1], player.cinematic_lock[1])
 	rot_pitch = clamp(rot_pitch, -player.cinematic_lock[1], player.cinematic_lock[1])
 	if (req_yaw == 0) and (req_pitch == 0):
@@ -157,8 +157,8 @@ func update_cine_camera(req_yaw,req_pitch):
 		rot_pitch = lerp(rot_pitch, 0, 0.1)
 	else:
 		camera_timeout[0] = 0.1
-	camera.set_rotation_deg(Vector3(rot_pitch, 0, 0))
-	rotary.set_rotation_deg(Vector3(0,rot_yaw,0))
+	camera.set_rotation_degrees(Vector3(rot_pitch, 0, 0))
+	rotary.set_rotation_degrees(Vector3(0,rot_yaw,0))
 
 	var camerapos = camera.get_transform()
 	var eye_position = skeleton.get_bone_global_pose(eye_bone).origin.reflect(Vector3(0,1,0))*skeleton_ratio
@@ -169,9 +169,9 @@ func update_cine_camera(req_yaw,req_pitch):
 func update_game_camera():
 	camera_timeout[0] = camera_timeout[1]
 	
-	base.set_rotation_deg(Vector3(0, yaw, 0))
+	base.set_rotation_degrees(Vector3(0, yaw, 0))
 	player.yaw = yaw
-	camera.set_rotation_deg(Vector3(pitch, 0, 0))
+	camera.set_rotation_degrees(Vector3(pitch, 0, 0))
 	var camerapos = camera.get_transform()
 
 	#fixes for the eyeposition (which is a bone on the armature)

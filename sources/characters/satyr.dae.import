@@ -4,6 +4,10 @@ importer="scene"
 type="PackedScene"
 path="res://.import/satyr.dae-19747fe5423856bdba71e861292d3c99.scn"
 
+[deps]
+
+source_md5="a2124b7c00ce30b81ccfce9d84df5d53"
+
 [params]
 
 nodes/root_type="Spatial"
@@ -16,11 +20,14 @@ materials/keep_on_reimport=true
 meshes/compress=true
 meshes/ensure_tangents=true
 meshes/storage=0
+meshes/light_baking=0
+meshes/lightmap_texel_size=0.05
 external_files/store_in_subdir=false
 animation/import=true
 animation/fps=15
 animation/filter_script=""
 animation/storage=false
+animation/keep_custom_tracks=false
 animation/optimizer/enabled=true
 animation/optimizer/max_linear_error=0.05
 animation/optimizer/max_angular_error=0.01

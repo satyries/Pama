@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/hair_normal.png-785570d751d08e181420d4cd15d05fd4.stex"
 
+[deps]
+
+source_md5="0b773041b8e25cc41c035f9627ffd175"
+
 [params]
 
 compress/mode=0

@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/button_nymph.png-03596b7a76dd06811aaccb5290bdea1d.stex"
 
+[deps]
+
+source_md5="aca13ab4f9aff9dd5ee6fa894ed29838"
+
 [params]
 
 compress/mode=0

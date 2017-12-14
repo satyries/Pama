@@ -4,6 +4,10 @@ importer="texture"
 type="StreamTexture"
 path="res://.import/eyebrow_n.png-202fbf60a75a0657a2c7d99bfb6945da.stex"
 
+[deps]
+
+source_md5="f665dbf39cec500b5d1c2114dca1ca70"
+
 [params]
 
 compress/mode=0
