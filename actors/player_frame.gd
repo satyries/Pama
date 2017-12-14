@@ -182,7 +182,7 @@ func _enter_tree():
 	var anim_db_size = 0
 	for i in idx_anim:
 #		print(i)
-		if anim_db_size < idx_anim[i]:
+		if anim_db_size <= idx_anim[i]:
 #			print("resizing the db to: " +str(idx_anim[i]))
 			idx_anim_db.resize(idx_anim[i]+1)
 			anim_db_size = idx_anim[i]+1
