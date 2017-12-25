@@ -43,6 +43,10 @@ stealth_mode=[ Object(InputEventKey,"resource_local_to_scene":false,"resource_na
 
 translations=PoolStringArray( "res://system/messages/text.en.translation", "res://system/messages/text.es.translation", "res://system/messages/text.de.translation", "res://system/messages/text.it.translation", "res://system/messages/text.ja.translation", "res://system/messages/text.ko.translation" )
 
+[physics]
+
+3d/physics_engine="GodotPhysics"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
